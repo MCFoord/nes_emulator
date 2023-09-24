@@ -18,9 +18,20 @@ bool CPU6502::getFlag(CPUFLAGS flag)
 
 void CPU6502::setFlag(CPUFLAGS flag, bool set)
 {
-
+    if (set)
+    {
+        status |= flag;
+    }
+    else
+    {
+        status &= ~(flag);
+    }
 }
 
+void CPU6502::connectBus(Bus *b)
+{
+    bus = b;
+}
 
 
 // addressing

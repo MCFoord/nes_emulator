@@ -45,7 +45,7 @@ class CPU6502
 
     private:
         Bus *bus = nullptr;
-        void connectBus(Bus *bus);
+        void connectBus(Bus *b);
 
         void reset();
 
