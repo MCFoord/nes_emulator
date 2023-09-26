@@ -9,15 +9,15 @@ set(6502_SRC_DIR "${6502_ROOT_DIR}/6502/src")
 set(6502_INCLUDE_DIR "${6502_ROOT_DIR}/6502/include")
 
 set(6502_SOURCES
+    ${6502_SRC_DIR}/cpu6502.cpp
     ${6502_SRC_DIR}/bus.cpp
-    ${6502_SRC_DIR}/cpu.cpp
 
     ${6502_ROOT_DIR}/main.cpp
 )
 
 set(6502_INCLUDES
     ${6502_INCLUDE_DIR}/bus.h
-    ${6502_INCLUDE_DIR}/cpu.h
+    ${6502_INCLUDE_DIR}/cpu6502.h
 )
 
 add_executable(emu6502
