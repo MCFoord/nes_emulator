@@ -20,9 +20,18 @@ class CPU6502
         uint16_t pc = 0x000;
         uint8_t status = 0x00;
 
+        struct instruction
+        {
+            uint8_t opcode;
+            void (CPU6502::*addressingMode)();
+            void (CPU6502::*operation)();
+            uint8_t cycles;
+        };
+
+
         uint16_t currentAddress = 0x000;
         uint8_t currentValue = 0x00;
-        uint8_t opcode = 0x00;
+        instruction currentInstruction;
         uint8_t cycles = 0;
 
         
@@ -128,14 +137,6 @@ class CPU6502
         void TXA();
         void TXS();
         void TYA();
-
-        struct instruction
-        {
-            uint8_t opcode;
-            void (CPU6502::*addressingMode)();
-            void (CPU6502::*operation)();
-            uint8_t cycles;
-        };
 
         std::unordered_map<uint8_t, instruction> instructions
         {
@@ -305,9 +306,7 @@ class CPU6502
             {0xF9, {0xF9, absoluteY, SBC, 4}},
             {0xFD, {0xFD, absoluteX, SBC, 4}},
             {0xFE, {0xFE, absoluteX, INC, 7}},
-        };
-
-        
+        };  
 };
 
 

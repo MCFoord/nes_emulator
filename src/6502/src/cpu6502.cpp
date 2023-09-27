@@ -65,6 +65,7 @@ void CPU6502::relative()
 {
     currentAddress = pc++;
     uint8_t offset = read(pc);
+
     if (offset & 0x80)
     {
         offset |= 0xFF00;
@@ -81,6 +82,8 @@ void CPU6502::indirect()
     currentAddress = pc++;
 
     currentAddress = (read(pc) << 8) | lowByte;
+
+    currentValue = read(currentAddress);
 }
 
 void CPU6502::indirectX()
@@ -91,6 +94,7 @@ void CPU6502::indirectX()
 
     currentAddress = (highByte << 8) | lowByte;
 
+    currentValue = read(currentAddress);
 }
 
 void CPU6502::indirectY()
@@ -106,6 +110,8 @@ void CPU6502::indirectY()
     {
         cycles++;
     }
+
+    currentValue = read(currentAddress);
 }
 
 void CPU6502::absolute()
@@ -113,9 +119,9 @@ void CPU6502::absolute()
     currentAddress = pc++;
     uint16_t lowByte = read(pc);
     currentAddress = pc++;
-    uint16_t valueAddress = (read(pc) << 8) | lowByte;
+    uint16_t currentAddress = (read(pc) << 8) | lowByte;
 
-    currentValue = read(valueAddress);
+    currentValue = read(currentAddress);
 }
 
 void CPU6502::absoluteX()
@@ -124,14 +130,14 @@ void CPU6502::absoluteX()
     uint16_t lowByte = read(pc);
     currentAddress = pc++;
     uint16_t highByte = read(pc);
-    uint16_t valueAddress = ((highByte << 8) | lowByte) + x;
+    currentAddress = ((highByte << 8) | lowByte) + x;
 
-    if (valueAddress & 0xFF00 != highByte)
+    if (currentAddress & 0xFF00 != highByte)
     {
         cycles++;
     }
 
-    currentValue = read(valueAddress);
+    currentValue = read(currentAddress);
 }
 
 void CPU6502::absoluteY()
@@ -140,16 +146,19 @@ void CPU6502::absoluteY()
     uint16_t lowByte = read(pc);
     currentAddress = pc++;
     uint16_t highByte = read(pc);
-    uint16_t valueAddress = ((highByte << 8) | lowByte) + y;
+    currentAddress = ((highByte << 8) | lowByte) + y;
 
-    if (valueAddress & 0xFF00 != highByte)
+    if (currentAddress & 0xFF00 != highByte)
     {
         cycles++;
     }
 
-    currentValue = read(valueAddress);
+    currentValue = read(currentAddress);
 }
 
+/* check this later for any bugs to do with not actually
+    assigning the value address to current address
+*/
 void CPU6502::zeroPage()
 {
     currentAddress = pc++;
@@ -184,10 +193,11 @@ void CPU6502::ADC()
 
 void CPU6502::AND()
 {
-    uint8_t result = a & currentValue;
+    a &= currentValue;
 
-    setFlag(CPUFLAGS::Z, result == 0x00);
-    setFlag(CPUFLAGS::N, result & 0x80);
+    setFlag(CPUFLAGS::Z, a == 0x00);
+    setFlag(CPUFLAGS::N, a & 0x80);
+
 }
 
 void CPU6502::ASL()
@@ -202,41 +212,121 @@ void CPU6502::ASL()
     setFlag(CPUFLAGS::Z, result == 0x00);
     setFlag(CPUFLAGS::C, currentValue & 0x80);
     setFlag(CPUFLAGS::N, result & 0x80);
+
+
+    if (currentInstruction.addressingMode == &CPU6502::accumulator)
+    {
+        a = result;
+    }
+    else
+    {
+        write(currentAddress, result);
+    }
 }
 
 void CPU6502::BCC()
 {
+    if (!getFlag(CPUFLAGS::C))
+    {
+        cycles++;
+        uint16_t rel = pc + currentAddress;
 
+        if (rel & 0xFF00 != pc & 0xFF00)
+        {
+            cycles++;
+        }
+
+        pc = rel;
+    }
 }
 
 void CPU6502::BCS()
 {
+    if (getFlag(CPUFLAGS::C))
+    {
+        cycles++;
+        uint16_t rel = pc + currentAddress;
 
+        if (rel & 0xFF00 != pc & 0xFF00)
+        {
+            cycles++;
+        }
+
+        pc = rel;
+    }
 }
 
 void CPU6502::BEQ()
 {
+    if (getFlag(CPUFLAGS::Z))
+    {
+        cycles++;
+        uint16_t rel = pc + currentAddress;
 
+        if (rel & 0xFF00 != pc & 0xFF00)
+        {
+            cycles++;
+        }
+
+        pc = rel;
+    }
 }
 
 void CPU6502::BIT()
 {
+    uint8_t result = a & currentValue;
 
+    setFlag(CPUFLAGS::Z, !result);
+    setFlag(CPUFLAGS::V, currentValue & 0x40);
+    setFlag(CPUFLAGS::N, currentValue & 0x80);
 }
 
 void CPU6502::BMI()
 {
+    if (getFlag(CPUFLAGS::N))
+    {
+        cycles++;
+        uint16_t rel = pc + currentAddress;
 
+        if (rel & 0xFF00 != pc & 0xFF00)
+        {
+            cycles++;
+        }
+
+        pc = rel;
+    }
 }
 
 void CPU6502::BNE()
 {
+    if (!getFlag(CPUFLAGS::Z))
+    {
+        cycles++;
+        uint16_t rel = pc + currentAddress;
 
+        if (rel & 0xFF00 != pc & 0xFF00)
+        {
+            cycles++;
+        }
+
+        pc = rel;
+    }
 }
 
 void CPU6502::BPL()
 {
+    if (!getFlag(CPUFLAGS::N))
+    {
+        cycles++;
+        uint16_t rel = pc + currentAddress;
 
+        if (rel & 0xFF00 != pc & 0xFF00)
+        {
+            cycles++;
+        }
+
+        pc = rel;
+    }
 }
 
 void CPU6502::BRK()
