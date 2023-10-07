@@ -21,6 +21,18 @@ void CPU6502::write(uint16_t addr, uint8_t value)
     bus->write(addr, value);
 }
 
+void CPU6502::push(uint8_t value)
+{
+    write(0x0100 + sp, value);
+    sp--;
+}
+
+uint8_t CPU6502::pop()
+{
+    sp++;
+    read(0x0100 + sp);
+}
+
 bool CPU6502::getFlag(CPUFLAGS flag)
 {
     return flag & status;
@@ -79,9 +91,21 @@ void CPU6502::indirect()
 {
     currentAddress = pc++;
     uint16_t lowByte = read(pc);
-    currentAddress = pc++;
+    u_int8_t highByte;
 
-    currentAddress = (read(pc) << 8) | lowByte;
+    if (currentAddress & 0xFF == 0xFF)
+    {
+        read(currentAddress & 0xFF00);
+    }
+    else
+    {
+        read(pc);
+    }
+
+    //check whether the above bug still increases the program counter
+    currentAddress = pc++;
+    
+    currentAddress = ( highByte << 8) | lowByte;
 
     currentValue = read(currentAddress);
 }
@@ -336,112 +360,193 @@ void CPU6502::BRK()
 
 void CPU6502::BVC()
 {
+    if (!getFlag(CPUFLAGS::V))
+    {
+        cycles++;
+        uint16_t rel = pc + currentAddress;
 
+        if (rel & 0xFF00 != pc & 0xFF00)
+        {
+            cycles++;
+        }
+
+        pc = rel;
+    }
 }
 
 void CPU6502::BVS()
 {
+    if (getFlag(CPUFLAGS::V))
+    {
+        cycles++;
+        uint16_t rel = pc + currentAddress;
 
+        if (rel & 0xFF00 != pc & 0xFF00)
+        {
+            cycles++;
+        }
+
+        pc = rel;
+    }
 }
 
 void CPU6502::CLC()
 {
-
+    setFlag(CPU6502::C, false);
 }
 
 void CPU6502::CLD()
 {
-
+    setFlag(CPU6502::D, false);
 }
 
 void CPU6502::CLI()
 {
-
+    setFlag(CPU6502::I, false);
 }
 
 void CPU6502::CLV()
 {
-
+    setFlag(CPU6502::V, false);
 }
 
 void CPU6502::CMP()
 {
+    uint8_t result = a - currentValue;
 
+    setFlag(CPU6502::C, (a >= currentValue));
+    setFlag(CPU6502::Z, (a = currentValue));
+    setFlag(CPU6502::N, (result & 0x80));
 }
 
 void CPU6502::CPX()
 {
+    uint8_t result = x - currentValue;
 
+    setFlag(CPU6502::C, (x >= currentValue));
+    setFlag(CPU6502::Z, (x = currentValue));
+    setFlag(CPU6502::N, (result & 0x80));
 }
 
 void CPU6502::CPY()
 {
+    uint8_t result = y - currentValue;
 
+    setFlag(CPU6502::C, (y >= currentValue));
+    setFlag(CPU6502::Z, (y = currentValue));
+    setFlag(CPU6502::N, (result & 0x80));
 }
 
 void CPU6502::DEC()
 {
+    u_int8_t result = currentValue - 1;
 
+    write(currentAddress, result);
+    setFlag(CPU6502::Z, (result == 0x00));
+    setFlag(CPU6502::N, (result & 0x80));
 }
 
 void CPU6502::DEX()
 {
+    x--;
 
+    setFlag(CPU6502::Z, (x == 0x00));
+    setFlag(CPU6502::N, (x & 0x80));
 }
 
 void CPU6502::DEY()
 {
+    y--;
 
+    setFlag(CPU6502::Z, (y == 0x00));
+    setFlag(CPU6502::N, (y & 0x80));
 }
 
 void CPU6502::EOR()
 {
+    a ^= currentValue;
 
+    setFlag(CPU6502::Z, (a == 0x00));
+    setFlag(CPU6502::N, (a & 0x80));
 }
 
 void CPU6502::INC()
 {
+    u_int8_t result = currentValue + 1;
 
+    write(currentAddress, result);
+    setFlag(CPU6502::Z, (result == 0x00));
+    setFlag(CPU6502::N, (result & 0x80));
 }
 
 void CPU6502::INX()
 {
+    x--;
 
+    setFlag(CPU6502::Z, (x == 0x00));
+    setFlag(CPU6502::N, (x & 0x80));
 }
 
 void CPU6502::INY()
 {
+    y++;
 
+    setFlag(CPU6502::Z, (y == 0x00));
+    setFlag(CPU6502::N, (y & 0x80));
 }
 
+//go to indirect page boundary bug
 void CPU6502::JMP()
 {
-
+    pc = currentAddress;
 }
 
 void CPU6502::JSR()
 {
-
+    push((pc >> 8) & 0xFF);
+    push(pc & 0xFF);
+    pc = currentAddress;
 }
 
 void CPU6502::LDA()
 {
-
+    a = currentValue;
+    setFlag(CPU6502::Z, (a == 0x00));
+    setFlag(CPU6502::N, (a & 0x80));
 }
 
 void CPU6502::LDX()
 {
-
+    x = currentValue;
+    setFlag(CPU6502::Z, (x == 0x00));
+    setFlag(CPU6502::N, (x & 0x80));
 }
 
 void CPU6502::LDY()
 {
-
+    y = currentValue;
+    setFlag(CPU6502::Z, (y == 0x00));
+    setFlag(CPU6502::N, (y & 0x80));
 }
 
 void CPU6502::LSR()
 {
+    if (currentInstruction.addressingMode == &CPU6502::accumulator)
+    {
+        setFlag(CPU6502::C, (a & 0x01));
+        a = (a >> 1);
+        setFlag(CPU6502::Z, (a == 0x00));
+        setFlag(CPU6502::N, (a & 0x80));
+    }
+    else
+    {
+        uint8_t result = (currentValue >> 1);
 
+        setFlag(CPU6502::C, (currentValue & 0x01));
+        setFlag(CPU6502::Z, (result == 0x00));
+        setFlag(CPU6502::N, (result & 0x80));
+        write(currentAddress, result);
+    }
 }
 
 void CPU6502::NOP()
@@ -451,37 +556,77 @@ void CPU6502::NOP()
 
 void CPU6502::ORA()
 {
+    a |= currentValue;
 
+    setFlag(CPU6502::Z, (a == 0x00));
+    setFlag(CPU6502::N, (a & 0x80));
 }
 
 void CPU6502::PHA()
 {
-
+    push(a);
 }
 
 void CPU6502::PHP()
 {
-
+    push(status);
 }
 
 void CPU6502::PLA()
 {
-
+    a = pop();
+    setFlag(CPU6502::Z, (a == 0x00));
+    setFlag(CPU6502::N, (a & 0x80));
 }
 
 void CPU6502::PLP()
 {
-
+    status = pop();
 }
 
 void CPU6502::ROL()
 {
+    
+    if (currentInstruction.addressingMode == &CPU6502::accumulator)
+    {
+        uint8_t result = (a << 1) | getFlag(CPU6502::C);
 
+        setFlag(CPU6502::C, (a & 0x80));
+        setFlag(CPU6502::Z, (result == 0x00));
+        setFlag(CPU6502::N, (result & 0x80));
+        a = result;
+    }
+    else
+    {
+        uint8_t result = (currentValue << 1) | getFlag(CPU6502::C);
+
+        setFlag(CPU6502::C, (currentValue & 0x80));
+        setFlag(CPU6502::Z, (result == 0x00));
+        setFlag(CPU6502::N, (result & 0x80));
+        write(currentAddress, result);
+    }
 }
 
 void CPU6502::ROR()
 {
+    if (currentInstruction.addressingMode == &CPU6502::accumulator)
+    {
+        uint8_t result = (a >> 1) | (getFlag(CPU6502::C) << 7);
 
+        setFlag(CPU6502::C, (a & 0x01));
+        setFlag(CPU6502::Z, (result == 0x00));
+        setFlag(CPU6502::N, (result & 0x80));
+        a = result;
+    }
+    else
+    {
+        uint8_t result = (currentValue >> 1) | (getFlag(CPU6502::C) << 7);
+
+        setFlag(CPU6502::C, (currentValue & 0x01));
+        setFlag(CPU6502::Z, (result == 0x00));
+        setFlag(CPU6502::N, (result & 0x80));
+        write(currentAddress, result);
+    }
 }
 
 void CPU6502::RTI()
