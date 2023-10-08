@@ -8,6 +8,8 @@ set(6502_ROOT_DIR "${PROJECT_SOURCE_DIR}/../src")
 set(6502_SRC_DIR "${6502_ROOT_DIR}/6502/src")
 set(6502_INCLUDE_DIR "${6502_ROOT_DIR}/6502/include")
 
+include_directories(${6502_INCLUDE_DIR})
+
 set(6502_SOURCES
     ${6502_SRC_DIR}/cpu6502.cpp
     ${6502_SRC_DIR}/bus.cpp
