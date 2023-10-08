@@ -508,6 +508,7 @@ void CPU6502::JMP()
 
 void CPU6502::JSR()
 {
+    pc--;
     push((pc >> 8) & 0xFF);
     push(pc & 0xFF);
     pc = currentAddress;
