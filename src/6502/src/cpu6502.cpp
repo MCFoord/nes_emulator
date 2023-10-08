@@ -355,7 +355,12 @@ void CPU6502::BPL()
 
 void CPU6502::BRK()
 {
+    push((pc >> 8) & 0xFF);
+    push(pc & 0xFF);
 
+    pc = (read(0xFFFF) << 8) | read(0xFFFE);
+    setFlag(CPU6502::B, true);
+    setFlag(CPU6502::I, true);
 }
 
 void CPU6502::BVC()
