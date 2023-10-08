@@ -631,75 +631,99 @@ void CPU6502::ROR()
 
 void CPU6502::RTI()
 {
+    status = pop();
+    uint8_t highByte = pop();
+    uint8_t lowByte = pop();
 
+    pc = (highByte << 8) | lowByte;
 }
 
 void CPU6502::RTS()
 {
+    uint8_t highByte = pop();
+    uint8_t lowByte = pop();
 
+    pc = (highByte << 8) | lowByte;
 }
 
 void CPU6502::SBC()
 {
+    uint16_t result = a + ~currentValue + getFlag(CPUFLAGS::C);
 
+    setFlag(CPUFLAGS::Z, result == 0x00);
+    setFlag(CPUFLAGS::C, result > 0xFF);
+    setFlag(CPUFLAGS::V, (a ^ result) & (currentValue ^ result) & 0x80);
+    setFlag(CPUFLAGS::N, result & 0x80);
+
+    a = result & 0xFF;
 }
 
 void CPU6502::SEC()
 {
-
+    setFlag(CPUFLAGS::C, true);
 }
 
 void CPU6502::SED()
 {
-
+    setFlag(CPUFLAGS::D, true);
 }
 
 void CPU6502::SEI()
 {
-
+    setFlag(CPUFLAGS::I, true);
 }
 
 void CPU6502::STA()
 {
-
+    write(currentAddress, a);
 }
 
 void CPU6502::STX()
 {
-
+    write(currentAddress, x);
 }
 
 void CPU6502::STY()
 {
-
+    write(currentAddress, y);
 }
 
 void CPU6502::TAX()
 {
-
+    x = a;
+    setFlag(CPU6502::Z, (x == 0x00));
+    setFlag(CPU6502::N, (x & 0x80));
 }
 
 void CPU6502::TAY()
 {
-
+    y = a;
+    setFlag(CPU6502::Z, (y == 0x00));
+    setFlag(CPU6502::N, (y & 0x80));
 }
 
 void CPU6502::TSX()
 {
-
+    x = sp;
+    setFlag(CPU6502::Z, (x == 0x00));
+    setFlag(CPU6502::N, (x & 0x80));
 }
 
 void CPU6502::TXA()
 {
-
+    a = x;
+    setFlag(CPU6502::Z, (a == 0x00));
+    setFlag(CPU6502::N, (a & 0x80));
 }
 
 void CPU6502::TXS()
 {
-
+    sp = x;
 }
 
 void CPU6502::TYA()
 {
-
+    a = y;
+    setFlag(CPU6502::Z, (a == 0x00));
+    setFlag(CPU6502::N, (a & 0x80));
 }
