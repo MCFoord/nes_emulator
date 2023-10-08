@@ -13,7 +13,7 @@ CPU6502::~CPU6502()
 
 uint8_t CPU6502::read(uint16_t addr)
 {
-    bus->read(addr);
+    return bus->read(addr);
 }
 
 void CPU6502::write(uint16_t addr, uint8_t value)
@@ -30,7 +30,7 @@ void CPU6502::push(uint8_t value)
 uint8_t CPU6502::pop()
 {
     sp++;
-    read(0x0100 + sp);
+    return read(0x0100 + sp);
 }
 
 bool CPU6502::getFlag(CPUFLAGS flag)

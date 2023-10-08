@@ -139,7 +139,7 @@ class CPU6502
         void TXS();
         void TYA();
 
-        std::unordered_map<uint8_t, instruction> instructions
+        std::unordered_map<uint8_t, instruction> instructions 
         {
             {0x00, {0x00, implicit, BRK, 7}},
             {0x01, {0x01, indirectX, ORA, 6}},
@@ -306,7 +306,7 @@ class CPU6502
             {0xF8, {0xF8, implicit, SED, 2}},
             {0xF9, {0xF9, absoluteY, SBC, 4}},
             {0xFD, {0xFD, absoluteX, SBC, 4}},
-            {0xFE, {0xFE, absoluteX, INC, 7}},
+            {0xFE, {0xFE, absoluteX, INC, 7}}
         };  
 };
 
