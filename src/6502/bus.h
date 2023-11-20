@@ -1,5 +1,4 @@
-#ifndef BUS_
-#define BUS_
+#pragma once
 
 #include <stdint.h>
 #include "cpu6502.h"
@@ -13,6 +12,3 @@ class Bus
         uint8_t read(uint16_t addr);
         void write(uint16_t addr, uint8_t value);
 };
-
-
-#endif

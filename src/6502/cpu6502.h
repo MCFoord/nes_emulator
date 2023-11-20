@@ -1,5 +1,4 @@
-#ifndef CPU6502_
-#define CPU6502_
+#pragma once
 
 #include <stdint.h>
 #include <vector>
@@ -27,9 +26,6 @@ class CPU6502
             void (CPU6502::*operation)();
             uint8_t cycles;
         };
-
-        instruction ins = {0x00, &CPU6502::implicit, &CPU6502::BRK, 7};
-
 
         uint16_t currentAddress = 0x000;
         uint8_t currentValue = 0x00;
@@ -59,11 +55,12 @@ class CPU6502
         void push(uint8_t value);
         uint8_t pop();
 
+        void reset();
+        void tick();
+
     private:
         Bus *bus = nullptr;
         void connectBus(Bus *b);
-
-        void reset();
 
         //addressing modes
         void implicit();
@@ -140,10 +137,7 @@ class CPU6502
         void TXA();
         void TXS();
         void TYA();
+        void ILL(); //illegal opcodes
 
         std::vector<instruction> instructions;
 };
-
-
-#endif
-
