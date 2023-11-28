@@ -20,7 +20,7 @@ void NESSystem::reset()
 
 }
 
-void NESSystem::start()
+void NESSystem::powerOn()
 {
-
+    CPU->powerOn();
 }

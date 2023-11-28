@@ -55,6 +55,7 @@ class CPU6502
         void push(uint8_t value);
         uint8_t pop();
 
+        void powerOn();
         void reset();
         void tick();
 

@@ -328,6 +328,15 @@ void CPU6502::connectBus(Bus *b)
     bus = b;
 }
 
+void CPU6502::powerOn()
+{
+    pc = 0x34;
+    a = 0x00;
+    x = 0x00;
+    y = 0x00;
+    sp = 0xFD;
+}
+
 void CPU6502::tick()
 {
 

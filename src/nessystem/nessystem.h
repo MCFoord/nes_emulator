@@ -14,6 +14,6 @@ class NESSystem
         CPU6502* CPU = nullptr;
 
         void tick();
-        void start();
+        void powerOn();
         void reset();
 };
