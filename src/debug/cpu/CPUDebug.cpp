@@ -1,6 +1,9 @@
 #include <iostream>
 #include <ncurses.h>
-#include "interface.h"
+// #include "interface.h"
+
+#define WINDOW_HEIGHT 50
+#define WINDOW_WIDTH 50
 
 int main(int argc, char **argv)
 {
@@ -20,7 +23,36 @@ int main(int argc, char **argv)
         break;
     }
 
-    WINDOW* win = initialise();
+    WINDOW* win = newwin(WINDOW_HEIGHT, WINDOW_WIDTH, 0, 0);
+    initscr();
+    noecho();
+    curs_set(0);
 
-    
+    bool quit = false;
+    while (!quit)
+    {
+        erase();
+        addstr("---------------------- 6502 debug ----------------------\n\n");
+        addstr("   options:\n");
+        addstr("       - e to execute next instruction\n");
+        addstr("       - q to quit\n");
+        addstr("       - r to reset\n\n");
+        addstr("--------------------------------------------------------\n");
+        refresh();
+
+        int ch = getch();
+
+        switch (ch)
+        {
+        case 'q':
+            quit = true;
+            break;
+        
+        default:
+            break;
+        }
+    }
+
+    endwin();
+    return 0;
 }

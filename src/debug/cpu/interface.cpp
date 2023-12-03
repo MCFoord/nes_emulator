@@ -26,7 +26,12 @@ void getInput()
 
 void displayOptions()
 {
-
+    addstr("-----------6502 debug-----------\n\n");
+    addstr("   options:\n");
+    addstr("       - e to execute next instruction\n");
+    addstr("       - q to quit\n");
+    addstr("       - r to reset\n\n");
+    addstr("--------------------------------\n");
 }
 
 void displayRegisters()
