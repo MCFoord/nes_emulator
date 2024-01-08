@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <vector>
+#include <string>
 
 class Bus;
 
@@ -46,6 +47,8 @@ class CPU6502
             N = (1 << 7)
         };
 
+        void connectBus(Bus *b);
+
         bool getFlag(CPUFLAGS flag);
         void setFlag(CPUFLAGS flag, bool set);
 
@@ -58,10 +61,13 @@ class CPU6502
         void powerOn();
         void reset();
         void tick();
+        void execute();
+
+        std::string registerToString();
+        std::string statusToString();
 
     private:
         Bus *bus = nullptr;
-        void connectBus(Bus *b);
 
         //addressing modes
         void implicit();

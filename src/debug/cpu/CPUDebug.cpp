@@ -1,5 +1,7 @@
 #include <iostream>
 #include <ncurses.h>
+#include <cpu6502.h>
+#include <bus.h>
 // #include "interface.h"
 
 #define WINDOW_HEIGHT 50
@@ -18,10 +20,15 @@ int main(int argc, char **argv)
         break;
     
     default:
-        std::cout << "[ERROR] too many arguments provided";\
+        std::cout << "[ERROR] too many arguments provided";
         return EXIT_FAILURE;
         break;
     }
+
+    CPU6502* cpu = new CPU6502();
+    Bus* bus = new Bus();
+
+    cpu->connectBus(bus);
 
     WINDOW* win = newwin(WINDOW_HEIGHT, WINDOW_WIDTH, 0, 0);
     initscr();
@@ -37,13 +44,26 @@ int main(int argc, char **argv)
         addstr("       - e to execute next instruction\n");
         addstr("       - q to quit\n");
         addstr("       - r to reset\n\n");
-        addstr("--------------------------------------------------------\n");
+        addstr("--------------------------------------------------------\n\n\n");
+        refresh();
+
+        addstr("Registers:\n");
+        addstr(cpu->registerToString().c_str());
+        addstr("\n\n");
+        addstr("Status:\n");
+        addstr(cpu->statusToString().c_str());
+        refresh();
+
+        addstr(bus->memToString(0x0000, 0xFFFF).c_str());
         refresh();
 
         int ch = getch();
 
         switch (ch)
         {
+        case 'e':
+            cpu->execute();
+            break;
         case 'q':
             quit = true;
             break;

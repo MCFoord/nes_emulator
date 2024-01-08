@@ -1,3 +1,5 @@
+#include <sstream>
+#include <iomanip>
 #include "cpu6502.h"
 #include "bus.h"
 
@@ -34,7 +36,7 @@ CPU6502::CPU6502()
         {0x18, &CPU6502::implicit, &CPU6502::CLC, 2},
         {0x19, &CPU6502::absoluteY, &CPU6502::ORA, 4},
         ILLEGAL(0x1A),
-        ILLEGAL(0x1B),
+        ILLEGAL(0x1B), 
         ILLEGAL(0x1C),
         {0x1D, &CPU6502::absoluteX, &CPU6502::ORA, 4},
         {0x1E, &CPU6502::absoluteX, &CPU6502::ASL, 7},
@@ -284,6 +286,31 @@ CPU6502::~CPU6502()
     
 }
 
+std::string CPU6502::registerToString()
+{
+    std::stringstream ss;
+    ss << "A: " << std::setfill('0') << std::setw(2) << std::hex << a << ", "
+       << "X: " << std::setfill('0') << std::setw(2) << std::hex << x << ", "
+       << "Y: " << std::setfill('0') << std::setw(2) << std::hex << y << ", "
+       << "SP: " << std::setfill('0') << std::setw(2) << std::hex << sp << ", "
+       << "PC: " << std::setfill('0') << std::setw(2) << std::hex << pc;
+
+    return ss.str();
+}
+
+std::string CPU6502::statusToString()
+{
+    std::stringstream ss;
+    ss << "C:" << getFlag(CPU6502::C) << ", "
+       << "Z:" << getFlag(CPU6502::Z) << ", "
+       << "I:" << getFlag(CPU6502::I) << ", "
+       << "D:" << getFlag(CPU6502::D) << ", "
+       << "B:" << getFlag(CPU6502::B) << ", "
+       << "U:" << getFlag(CPU6502::U) << ", "
+       << "V:" << getFlag(CPU6502::V) << ", "
+       << "N:" << getFlag(CPU6502::N);
+}
+
 uint8_t CPU6502::read(uint16_t addr)
 {
     return bus->read(addr);
@@ -345,6 +372,11 @@ void CPU6502::tick()
 void CPU6502::reset()
 {
     
+}
+
+void CPU6502::execute()
+{
+    return;
 }
 
 
