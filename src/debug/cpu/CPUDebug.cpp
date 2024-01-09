@@ -47,14 +47,25 @@ int main(int argc, char **argv)
         addstr("--------------------------------------------------------\n\n\n");
         refresh();
 
-        addstr("Registers:\n");
+        addstr("Registers:\n\n");
         addstr(cpu->registerToString().c_str());
         addstr("\n\n");
-        addstr("Status:\n");
-        addstr(cpu->statusToString().c_str());
         refresh();
 
-        addstr(bus->memToString(0x0000, 0xFFFF).c_str());
+        addstr("Status:\n\n");
+        addstr(cpu->statusToString().c_str());
+        addstr("\n\n");
+        refresh();
+
+        addstr("Zero Page:\n\n");
+        addstr(bus->memToString(0x0000, 0x00FF).c_str());
+        addstr("\n\n");
+        refresh();
+
+        addstr("Stack:\n\n");
+        addstr(bus->memToString(0x0100, 0x01FF).c_str());
+        addstr("\n\n");
+
         refresh();
 
         int ch = getch();

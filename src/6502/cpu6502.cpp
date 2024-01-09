@@ -289,11 +289,11 @@ CPU6502::~CPU6502()
 std::string CPU6502::registerToString()
 {
     std::stringstream ss;
-    ss << "A: " << std::setfill('0') << std::setw(2) << std::hex << a << ", "
-       << "X: " << std::setfill('0') << std::setw(2) << std::hex << x << ", "
-       << "Y: " << std::setfill('0') << std::setw(2) << std::hex << y << ", "
-       << "SP: " << std::setfill('0') << std::setw(2) << std::hex << sp << ", "
-       << "PC: " << std::setfill('0') << std::setw(2) << std::hex << pc;
+    ss << "A: " << std::setfill('0') << std::setw(2) << std::hex << std::to_string(a) << ", "
+       << "X: " << std::setfill('0') << std::setw(2) << std::hex << std::to_string(x) << ", "
+       << "Y: " << std::setfill('0') << std::setw(2) << std::hex << std::to_string(y) << ", "
+       << "SP: " << std::setfill('0') << std::setw(2) << std::hex << std::to_string(sp) << ", "
+       << "PC: " << std::setfill('0') << std::setw(4) << std::hex << std::to_string(pc);
 
     return ss.str();
 }
@@ -301,14 +301,16 @@ std::string CPU6502::registerToString()
 std::string CPU6502::statusToString()
 {
     std::stringstream ss;
-    ss << "C:" << getFlag(CPU6502::C) << ", "
-       << "Z:" << getFlag(CPU6502::Z) << ", "
-       << "I:" << getFlag(CPU6502::I) << ", "
-       << "D:" << getFlag(CPU6502::D) << ", "
-       << "B:" << getFlag(CPU6502::B) << ", "
-       << "U:" << getFlag(CPU6502::U) << ", "
-       << "V:" << getFlag(CPU6502::V) << ", "
-       << "N:" << getFlag(CPU6502::N);
+    ss << "C: " << getFlag(CPU6502::C) << ", "
+       << "Z: " << getFlag(CPU6502::Z) << ", "
+       << "I: " << getFlag(CPU6502::I) << ", "
+       << "D: " << getFlag(CPU6502::D) << ", "
+       << "B: " << getFlag(CPU6502::B) << ", "
+       << "U: " << getFlag(CPU6502::U) << ", "
+       << "V: " << getFlag(CPU6502::V) << ", "
+       << "N: " << getFlag(CPU6502::N);
+
+    return ss.str();
 }
 
 uint8_t CPU6502::read(uint16_t addr)

@@ -1,4 +1,5 @@
 #include <sstream>
+#include <iostream>
 #include <iomanip>
 #include "bus.h"
 
@@ -22,9 +23,15 @@ std::string Bus::memToString(uint16_t start, uint16_t end)
 {
 
     std::stringstream ss;
-    for (uint8_t i = start; i <= end; ++i)
+    int count = 0;
+    for (uint16_t i = start; i <= end; ++i)
     {
-        ss << std::setfill('0') << std::setw(2) << std::hex << ram[i];
+        if (count % 30 == 0 && count != 0)
+        {
+            ss << "\n";
+        }
+        ss << std::setfill('0') << std::setw(2) << std::hex << std::to_string(ram[i]) << " ";
+        ++count;
     }
 
     return ss.str();
