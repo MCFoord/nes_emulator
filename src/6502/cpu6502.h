@@ -23,6 +23,8 @@ class CPU6502
         struct instruction
         {
             uint8_t opcode;
+            std::string instructionName;
+            std::string addressingModeName;
             void (CPU6502::*addressingMode)();
             void (CPU6502::*operation)();
             uint8_t cycles;
@@ -52,13 +54,13 @@ class CPU6502
         bool getFlag(CPUFLAGS flag);
         void setFlag(CPUFLAGS flag, bool set);
 
+        void fetch();
         uint8_t read(uint16_t addr);
         void write(uint16_t addr, uint8_t value);
 
         void push(uint8_t value);
         uint8_t pop();
 
-        void powerOn();
         void reset();
         void tick();
         void execute();

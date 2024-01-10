@@ -29,6 +29,8 @@ int main(int argc, char **argv)
     Bus* bus = new Bus();
 
     cpu->connectBus(bus);
+    bus->loadProgram(argv[1]);
+    cpu->reset();
 
     WINDOW* win = newwin(WINDOW_HEIGHT, WINDOW_WIDTH, 0, 0);
     initscr();
@@ -47,6 +49,7 @@ int main(int argc, char **argv)
         addstr("--------------------------------------------------------\n\n\n");
         refresh();
 
+        cpu->fetch();
         addstr("Registers:\n\n");
         addstr(cpu->registerToString().c_str());
         addstr("\n\n");
@@ -66,6 +69,10 @@ int main(int argc, char **argv)
         addstr(bus->memToString(0x0100, 0x01FF).c_str());
         addstr("\n\n");
 
+        addstr("Program Data:\n\n");
+        addstr(bus->memToString(0x0400, 0x04FF).c_str());
+        addstr("\n\n");
+
         refresh();
 
         int ch = getch();
@@ -75,8 +82,14 @@ int main(int argc, char **argv)
         case 'e':
             cpu->execute();
             break;
+            
         case 'q':
             quit = true;
+            break;
+        
+        case 'r':
+            bus->loadProgram(argv[1]);
+            cpu->reset();
             break;
         
         default:

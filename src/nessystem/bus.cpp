@@ -1,4 +1,5 @@
 #include <sstream>
+#include <fstream>
 #include <iostream>
 #include <iomanip>
 #include "bus.h"
@@ -30,9 +31,20 @@ std::string Bus::memToString(uint16_t start, uint16_t end)
         {
             ss << "\n";
         }
-        ss << std::setfill('0') << std::setw(2) << std::hex << std::to_string(ram[i]) << " ";
+        ss << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(ram[i]) << " ";
         ++count;
     }
 
     return ss.str();
+}
+
+void Bus::loadProgram(char* fileName)
+{
+    std::ifstream file(fileName, std::ios::binary);
+    file.seekg (0, file.end);
+    int length = file.tellg();
+    file.seekg (0, file.beg);
+
+    file.read(reinterpret_cast<char*>(ram), length);
+
 }

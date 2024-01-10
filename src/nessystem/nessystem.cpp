@@ -22,5 +22,5 @@ void NESSystem::reset()
 
 void NESSystem::powerOn()
 {
-    CPU->powerOn();
+    
 }
