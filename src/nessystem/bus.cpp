@@ -25,11 +25,19 @@ std::string Bus::memToString(uint16_t start, uint16_t end)
 
     std::stringstream ss;
     int count = 0;
+    ss << "    ";
+    for (int i = 0; i < 16; ++i)
+    {
+        ss << std::setfill('0') << std::setw(2) << std::hex << i << " ";
+    }
+
+    ss << "\n";
+
     for (uint16_t i = start; i <= end; ++i)
     {
-        if (count % 30 == 0 && count != 0)
+        if (count % 16 == 0)
         {
-            ss << "\n";
+            ss << "\n" << std::setfill('0') << std::setw(2) << std::hex << count / 16 << "  ";
         }
         ss << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(ram[i]) << " ";
         ++count;
