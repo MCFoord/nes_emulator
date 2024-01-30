@@ -49,7 +49,7 @@ int main(int argc, char **argv)
         addstr("--------------------------------------------------------\n\n\n");
         refresh();
 
-        cpu->fetch();
+        // cpu->fetch();
         addstr("Registers:\n\n");
         addstr(cpu->registerToString().c_str());
         addstr("\n\n");
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
         
         case 'r':
             bus->loadProgram(argv[1]);
-            cpu->reset();
+            cpu->Reset();
             break;
         
         default:

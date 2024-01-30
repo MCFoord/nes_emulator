@@ -144,10 +144,10 @@ private:
 	static const uint16_t nmiVectorL = 0xFFFA;
 
 	// read/write callbacks
-	typedef void (*BusWrite)(uint16_t, uint8_t);
-	typedef uint8_t (*BusRead)(uint16_t);
-	BusRead Read;
-	BusWrite Write;
+	// typedef void (*BusWrite)(uint16_t, uint8_t);
+	// typedef uint8_t (*BusRead)(uint16_t);
+	// BusRead Read;
+	// BusWrite Write;
 
 	// stack operations
 	inline void StackPush(uint8_t byte);

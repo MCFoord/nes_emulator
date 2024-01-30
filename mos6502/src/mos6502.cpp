@@ -979,7 +979,7 @@ void mos6502::execute()
 	Instr instr = InstrTable[opcode];
 
 	// execute
-	Exec(instr);
+	Exec(instr);  
 }
 
 void mos6502::Exec(Instr i)
