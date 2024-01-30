@@ -6,7 +6,6 @@
 class Bus
 {
     public:
-        Bus();
         uint8_t ram[64 * 1024];
 
         uint8_t read(uint16_t addr);

@@ -1,3 +1,5 @@
+#include <sstream>
+#include <iomanip>
 #include "mos6502.h"
 
 #define NEGATIVE  0x80
@@ -84,626 +86,910 @@ mos6502::mos6502()
 	instr.code = &mos6502::Op_ADC;
 	instr.cycles = 4;
 	InstrTable[0x79] = instr;
+	instr.addressingModeName = "Addr_ABY";
+	instr.instructionName = "Op_ADC";
 
 	instr.addr = &mos6502::Addr_IMM;
 	instr.code = &mos6502::Op_AND;
 	instr.cycles = 2;
 	InstrTable[0x29] = instr;
+	instr.addressingModeName = "Addr_IMM";
+	instr.instructionName = "Op_AND";
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_AND;
 	instr.cycles = 4;
 	InstrTable[0x2D] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_AND";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_AND;
 	instr.cycles = 3;
 	InstrTable[0x25] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_AND";
 	instr.addr = &mos6502::Addr_INX;
 	instr.code = &mos6502::Op_AND;
 	instr.cycles = 6;
 	InstrTable[0x21] = instr;
+	instr.addressingModeName = "Addr_INX";
+	instr.instructionName = "Op_AND";
 	instr.addr = &mos6502::Addr_INY;
 	instr.code = &mos6502::Op_AND;
 	instr.cycles = 5;
 	InstrTable[0x31] = instr;
+	instr.addressingModeName = "Addr_INY";
+	instr.instructionName = "Op_AND";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_AND;
 	instr.cycles = 4;
 	InstrTable[0x35] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_AND";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_AND;
 	instr.cycles = 4;
 	InstrTable[0x3D] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_AND";
 	instr.addr = &mos6502::Addr_ABY;
 	instr.code = &mos6502::Op_AND;
 	instr.cycles = 4;
 	InstrTable[0x39] = instr;
+	instr.addressingModeName = "Addr_ABY";
+	instr.instructionName = "Op_AND";
 
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_ASL;
 	instr.cycles = 6;
 	InstrTable[0x0E] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_ASL";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_ASL;
 	instr.cycles = 5;
 	InstrTable[0x06] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_ASL";
 	instr.addr = &mos6502::Addr_ACC;
 	instr.code = &mos6502::Op_ASL_ACC;
 	instr.cycles = 2;
 	InstrTable[0x0A] = instr;
+	instr.addressingModeName = "Addr_ACC";
+	instr.instructionName = "Op_ASL_ACC";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_ASL;
 	instr.cycles = 6;
 	InstrTable[0x16] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_ASL";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_ASL;
 	instr.cycles = 7;
 	InstrTable[0x1E] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_ASL";
 
 	instr.addr = &mos6502::Addr_REL;
 	instr.code = &mos6502::Op_BCC;
 	instr.cycles = 2;
 	InstrTable[0x90] = instr;
+	instr.addressingModeName = "Addr_REL";
+	instr.instructionName = "Op_BCC";
 
 	instr.addr = &mos6502::Addr_REL;
 	instr.code = &mos6502::Op_BCS;
 	instr.cycles = 2;
 	InstrTable[0xB0] = instr;
+	instr.addressingModeName = "Addr_REL";
+	instr.instructionName = "Op_BCS";
 
 	instr.addr = &mos6502::Addr_REL;
 	instr.code = &mos6502::Op_BEQ;
 	instr.cycles = 2;
 	InstrTable[0xF0] = instr;
+	instr.addressingModeName = "Addr_REL";
+	instr.instructionName = "Op_BEQ";
 
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_BIT;
 	instr.cycles = 4;
 	InstrTable[0x2C] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_BIT";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_BIT;
 	instr.cycles = 3;
 	InstrTable[0x24] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_BIT";
 
 	instr.addr = &mos6502::Addr_REL;
 	instr.code = &mos6502::Op_BMI;
 	instr.cycles = 2;
 	InstrTable[0x30] = instr;
+	instr.addressingModeName = "Addr_REL";
+	instr.instructionName = "Op_BMI";
 
 	instr.addr = &mos6502::Addr_REL;
 	instr.code = &mos6502::Op_BNE;
 	instr.cycles = 2;
 	InstrTable[0xD0] = instr;
+	instr.addressingModeName = "Addr_REL";
+	instr.instructionName = "Op_BNE";
 
 	instr.addr = &mos6502::Addr_REL;
 	instr.code = &mos6502::Op_BPL;
 	instr.cycles = 2;
 	InstrTable[0x10] = instr;
+	instr.addressingModeName = "Addr_REL";
+	instr.instructionName = "Op_BPL";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_BRK;
 	instr.cycles = 7;
 	InstrTable[0x00] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_BRK";
 
 	instr.addr = &mos6502::Addr_REL;
 	instr.code = &mos6502::Op_BVC;
 	instr.cycles = 2;
 	InstrTable[0x50] = instr;
+	instr.addressingModeName = "Addr_REL";
+	instr.instructionName = "Op_BVC";
 
 	instr.addr = &mos6502::Addr_REL;
 	instr.code = &mos6502::Op_BVS;
 	instr.cycles = 2;
 	InstrTable[0x70] = instr;
+	instr.addressingModeName = "Addr_REL";
+	instr.instructionName = "Op_BVS";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_CLC;
 	instr.cycles = 2;
 	InstrTable[0x18] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_CLC";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_CLD;
 	instr.cycles = 2;
 	InstrTable[0xD8] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_CLD";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_CLI;
 	instr.cycles = 2;
 	InstrTable[0x58] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_CLI";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_CLV;
 	instr.cycles = 2;
 	InstrTable[0xB8] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_CLV";
 
 	instr.addr = &mos6502::Addr_IMM;
 	instr.code = &mos6502::Op_CMP;
 	instr.cycles = 2;
 	InstrTable[0xC9] = instr;
+	instr.addressingModeName = "Addr_IMM";
+	instr.instructionName = "Op_CMP";
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_CMP;
 	instr.cycles = 4;
 	InstrTable[0xCD] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_CMP";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_CMP;
 	instr.cycles = 3;
 	InstrTable[0xC5] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_CMP";
 	instr.addr = &mos6502::Addr_INX;
 	instr.code = &mos6502::Op_CMP;
 	instr.cycles = 6;
 	InstrTable[0xC1] = instr;
+	instr.addressingModeName = "Addr_INX";
+	instr.instructionName = "Op_CMP";
 	instr.addr = &mos6502::Addr_INY;
 	instr.code = &mos6502::Op_CMP;
 	instr.cycles = 3;
 	InstrTable[0xD1] = instr;
+	instr.addressingModeName = "Addr_INY";
+	instr.instructionName = "Op_CMP";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_CMP;
 	instr.cycles = 4;
 	InstrTable[0xD5] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_CMP";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_CMP;
 	instr.cycles = 4;
 	InstrTable[0xDD] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_CMP";
 	instr.addr = &mos6502::Addr_ABY;
 	instr.code = &mos6502::Op_CMP;
 	instr.cycles = 4;
 	InstrTable[0xD9] = instr;
+	instr.addressingModeName = "Addr_ABY";
+	instr.instructionName = "Op_CMP";
 
 	instr.addr = &mos6502::Addr_IMM;
 	instr.code = &mos6502::Op_CPX;
 	instr.cycles = 2;
 	InstrTable[0xE0] = instr;
+	instr.addressingModeName = "Addr_IMM";
+	instr.instructionName = "Op_CPX";
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_CPX;
 	instr.cycles = 4;
 	InstrTable[0xEC] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_CPX";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_CPX;
 	instr.cycles = 3;
 	InstrTable[0xE4] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_CPX";
 
 	instr.addr = &mos6502::Addr_IMM;
 	instr.code = &mos6502::Op_CPY;
 	instr.cycles = 2;
 	InstrTable[0xC0] = instr;
+	instr.addressingModeName = "Addr_IMM";
+	instr.instructionName = "Op_CPY";
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_CPY;
 	instr.cycles = 4;
 	InstrTable[0xCC] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_CPY";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_CPY;
 	instr.cycles = 3;
 	InstrTable[0xC4] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_CPY";
 
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_DEC;
 	instr.cycles = 6;
 	InstrTable[0xCE] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_DEC";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_DEC;
 	instr.cycles = 5;
 	InstrTable[0xC6] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_DEC";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_DEC;
 	instr.cycles = 6;
 	InstrTable[0xD6] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_DEC";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_DEC;
 	instr.cycles = 7;
 	InstrTable[0xDE] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_DEC";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_DEX;
 	instr.cycles = 2;
 	InstrTable[0xCA] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_DEX";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_DEY;
 	instr.cycles = 2;
 	InstrTable[0x88] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_DEY";
 
 	instr.addr = &mos6502::Addr_IMM;
 	instr.code = &mos6502::Op_EOR;
 	instr.cycles = 2;
 	InstrTable[0x49] = instr;
+	instr.addressingModeName = "Addr_IMM";
+	instr.instructionName = "Op_EOR";
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_EOR;
 	instr.cycles = 4;
 	InstrTable[0x4D] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_EOR";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_EOR;
 	instr.cycles = 3;
 	InstrTable[0x45] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_EOR";
 	instr.addr = &mos6502::Addr_INX;
 	instr.code = &mos6502::Op_EOR;
 	instr.cycles = 6;
 	InstrTable[0x41] = instr;
+	instr.addressingModeName = "Addr_INX";
+	instr.instructionName = "Op_EOR";
 	instr.addr = &mos6502::Addr_INY;
 	instr.code = &mos6502::Op_EOR;
 	instr.cycles = 5;
 	InstrTable[0x51] = instr;
+	instr.addressingModeName = "Addr_INY";
+	instr.instructionName = "Op_EOR";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_EOR;
 	instr.cycles = 4;
 	InstrTable[0x55] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_EOR";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_EOR;
 	instr.cycles = 4;
 	InstrTable[0x5D] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_EOR";
 	instr.addr = &mos6502::Addr_ABY;
 	instr.code = &mos6502::Op_EOR;
 	instr.cycles = 4;
 	InstrTable[0x59] = instr;
+	instr.addressingModeName = "Addr_ABY";
+	instr.instructionName = "Op_EOR";
 
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_INC;
 	instr.cycles = 6;
 	InstrTable[0xEE] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_INC";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_INC;
 	instr.cycles = 5;
 	InstrTable[0xE6] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_INC";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_INC;
 	instr.cycles = 6;
 	InstrTable[0xF6] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_INC";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_INC;
 	instr.cycles = 7;
 	InstrTable[0xFE] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_INC";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_INX;
 	instr.cycles = 2;
 	InstrTable[0xE8] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_INX";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_INY;
 	instr.cycles = 2;
 	InstrTable[0xC8] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_INY";
 
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_JMP;
 	instr.cycles = 3;
 	InstrTable[0x4C] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_JMP";
 	instr.addr = &mos6502::Addr_ABI;
 	instr.code = &mos6502::Op_JMP;
 	instr.cycles = 5;
 	InstrTable[0x6C] = instr;
+	instr.addressingModeName = "Addr_ABI";
+	instr.instructionName = "Op_JMP";
 
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_JSR;
 	instr.cycles = 6;
 	InstrTable[0x20] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_JSR";
 
 	instr.addr = &mos6502::Addr_IMM;
 	instr.code = &mos6502::Op_LDA;
 	instr.cycles = 2;
 	InstrTable[0xA9] = instr;
+	instr.addressingModeName = "Addr_IMM";
+	instr.instructionName = "Op_LDA";
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_LDA;
 	instr.cycles = 4;
 	InstrTable[0xAD] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_LDA";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_LDA;
 	instr.cycles = 3;
 	InstrTable[0xA5] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_LDA";
 	instr.addr = &mos6502::Addr_INX;
 	instr.code = &mos6502::Op_LDA;
 	instr.cycles = 6;
 	InstrTable[0xA1] = instr;
+	instr.addressingModeName = "Addr_INX";
+	instr.instructionName = "Op_LDA";
 	instr.addr = &mos6502::Addr_INY;
 	instr.code = &mos6502::Op_LDA;
 	instr.cycles = 5;
 	InstrTable[0xB1] = instr;
+	instr.addressingModeName = "Addr_INY";
+	instr.instructionName = "Op_LDA";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_LDA;
 	instr.cycles = 4;
 	InstrTable[0xB5] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_LDA";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_LDA;
 	instr.cycles = 4;
 	InstrTable[0xBD] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_LDA";
 	instr.addr = &mos6502::Addr_ABY;
 	instr.code = &mos6502::Op_LDA;
 	instr.cycles = 4;
 	InstrTable[0xB9] = instr;
+	instr.addressingModeName = "Addr_ABY";
+	instr.instructionName = "Op_LDA";
 
 	instr.addr = &mos6502::Addr_IMM;
 	instr.code = &mos6502::Op_LDX;
 	instr.cycles = 2;
 	InstrTable[0xA2] = instr;
+	instr.addressingModeName = "Addr_IMM";
+	instr.instructionName = "Op_LDX";
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_LDX;
 	instr.cycles = 4;
 	InstrTable[0xAE] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_LDX";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_LDX;
 	instr.cycles = 3;
 	InstrTable[0xA6] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_LDX";
 	instr.addr = &mos6502::Addr_ABY;
 	instr.code = &mos6502::Op_LDX;
 	instr.cycles = 4;
 	InstrTable[0xBE] = instr;
+	instr.addressingModeName = "Addr_ABY";
+	instr.instructionName = "Op_LDX";
 	instr.addr = &mos6502::Addr_ZEY;
 	instr.code = &mos6502::Op_LDX;
 	instr.cycles = 4;
 	InstrTable[0xB6] = instr;
+	instr.addressingModeName = "Addr_ZEY";
+	instr.instructionName = "Op_LDX";
 
 	instr.addr = &mos6502::Addr_IMM;
 	instr.code = &mos6502::Op_LDY;
 	instr.cycles = 2;
 	InstrTable[0xA0] = instr;
+	instr.addressingModeName = "Addr_IMM";
+	instr.instructionName = "Op_LDY";
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_LDY;
 	instr.cycles = 4;
 	InstrTable[0xAC] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_LDY";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_LDY;
 	instr.cycles = 3;
 	InstrTable[0xA4] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_LDY";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_LDY;
 	instr.cycles = 4;
 	InstrTable[0xB4] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_LDY";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_LDY;
 	instr.cycles = 4;
 	InstrTable[0xBC] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_LDY";
 
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_LSR;
 	instr.cycles = 6;
 	InstrTable[0x4E] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_LSR";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_LSR;
 	instr.cycles = 5;
 	InstrTable[0x46] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_LSR";
 	instr.addr = &mos6502::Addr_ACC;
 	instr.code = &mos6502::Op_LSR_ACC;
 	instr.cycles = 2;
 	InstrTable[0x4A] = instr;
+	instr.addressingModeName = "Addr_ACC";
+	instr.instructionName = "Op_LSR_ACC";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_LSR;
 	instr.cycles = 6;
 	InstrTable[0x56] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_LSR";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_LSR;
 	instr.cycles = 7;
 	InstrTable[0x5E] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_LSR";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_NOP;
 	instr.cycles = 2;
 	InstrTable[0xEA] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_NOP";
 
 	instr.addr = &mos6502::Addr_IMM;
 	instr.code = &mos6502::Op_ORA;
 	instr.cycles = 2;
 	InstrTable[0x09] = instr;
+	instr.addressingModeName = "Addr_IMM";
+	instr.instructionName = "Op_ORA";
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_ORA;
 	instr.cycles = 4;
 	InstrTable[0x0D] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_ORA";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_ORA;
 	instr.cycles = 3;
 	InstrTable[0x05] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_ORA";
 	instr.addr = &mos6502::Addr_INX;
 	instr.code = &mos6502::Op_ORA;
 	instr.cycles = 6;
 	InstrTable[0x01] = instr;
+	instr.addressingModeName = "Addr_INX";
+	instr.instructionName = "Op_ORA";
 	instr.addr = &mos6502::Addr_INY;
 	instr.code = &mos6502::Op_ORA;
 	instr.cycles = 5;
 	InstrTable[0x11] = instr;
+	instr.addressingModeName = "Addr_INY";
+	instr.instructionName = "Op_ORA";
 	InstrTable[0x1D] = instr;
 	instr.addr = &mos6502::Addr_ABY;
 	instr.code = &mos6502::Op_ORA;
 	instr.cycles = 4;
 	InstrTable[0x19] = instr;
+	instr.addressingModeName = "Addr_ABY";
+	instr.instructionName = "Op_ORA";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_PHA;
 	instr.cycles = 3;
 	InstrTable[0x48] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_PHA";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_PHP;
 	instr.cycles = 3;
 	InstrTable[0x08] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_PHP";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_PLA;
 	instr.cycles = 4;
 	InstrTable[0x68] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_PLA";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_PLP;
 	instr.cycles = 4;
 	InstrTable[0x28] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_PLP";
 
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_ROL;
 	instr.cycles = 6;
 	InstrTable[0x2E] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_ROL";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_ROL;
 	instr.cycles = 5;
 	InstrTable[0x26] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_ROL";
 	instr.addr = &mos6502::Addr_ACC;
 	instr.code = &mos6502::Op_ROL_ACC;
 	instr.cycles = 2;
 	InstrTable[0x2A] = instr;
+	instr.addressingModeName = "Addr_ACC";
+	instr.instructionName = "Op_ROL_ACC";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_ROL;
 	instr.cycles = 6;
 	InstrTable[0x36] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_ROL";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_ROL;
 	instr.cycles = 7;
 	InstrTable[0x3E] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_ROL";
 
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_ROR;
 	instr.cycles = 6;
 	InstrTable[0x6E] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_ROR";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_ROR;
 	instr.cycles = 5;
 	InstrTable[0x66] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_ROR";
 	instr.addr = &mos6502::Addr_ACC;
 	instr.code = &mos6502::Op_ROR_ACC;
 	instr.cycles = 2;
 	InstrTable[0x6A] = instr;
+	instr.addressingModeName = "Addr_ACC";
+	instr.instructionName = "Op_ROR_ACC";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_ROR;
 	instr.cycles = 6;
 	InstrTable[0x76] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_ROR";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_ROR;
 	instr.cycles = 7;
 	InstrTable[0x7E] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_ROR";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_RTI;
 	instr.cycles = 6;
 	InstrTable[0x40] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_RTI";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_RTS;
 	instr.cycles = 6;
 	InstrTable[0x60] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_RTS";
 
 	instr.addr = &mos6502::Addr_IMM;
 	instr.code = &mos6502::Op_SBC;
 	instr.cycles = 2;
 	InstrTable[0xE9] = instr;
+	instr.addressingModeName = "Addr_IMM";
+	instr.instructionName = "Op_SBC";
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_SBC;
 	instr.cycles = 4;
 	InstrTable[0xED] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_SBC";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_SBC;
 	instr.cycles = 3;
 	InstrTable[0xE5] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_SBC";
 	instr.addr = &mos6502::Addr_INX;
 	instr.code = &mos6502::Op_SBC;
 	instr.cycles = 6;
 	InstrTable[0xE1] = instr;
+	instr.addressingModeName = "Addr_INX";
+	instr.instructionName = "Op_SBC";
 	instr.addr = &mos6502::Addr_INY;
 	instr.code = &mos6502::Op_SBC;
 	instr.cycles = 5;
 	InstrTable[0xF1] = instr;
+	instr.addressingModeName = "Addr_INY";
+	instr.instructionName = "Op_SBC";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_SBC;
 	instr.cycles = 4;
 	InstrTable[0xF5] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_SBC";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_SBC;
 	instr.cycles = 4;
 	InstrTable[0xFD] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_SBC";
 	instr.addr = &mos6502::Addr_ABY;
 	instr.code = &mos6502::Op_SBC;
 	instr.cycles = 4;
 	InstrTable[0xF9] = instr;
+	instr.addressingModeName = "Addr_ABY";
+	instr.instructionName = "Op_SBC";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_SEC;
 	instr.cycles = 2;
 	InstrTable[0x38] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_SEC";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_SED;
 	instr.cycles = 2;
 	InstrTable[0xF8] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_SED";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_SEI;
 	instr.cycles = 2;
 	InstrTable[0x78] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_SEI";
 
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_STA;
 	instr.cycles = 4;
 	InstrTable[0x8D] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_STA";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_STA;
 	instr.cycles = 3;
 	InstrTable[0x85] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_STA";
 	instr.addr = &mos6502::Addr_INX;
 	instr.code = &mos6502::Op_STA;
 	instr.cycles = 6;
 	InstrTable[0x81] = instr;
+	instr.addressingModeName = "Addr_INX";
+	instr.instructionName = "Op_STA";
 	instr.addr = &mos6502::Addr_INY;
 	instr.code = &mos6502::Op_STA;
 	instr.cycles = 6;
 	InstrTable[0x91] = instr;
+	instr.addressingModeName = "Addr_INY";
+	instr.instructionName = "Op_STA";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_STA;
 	instr.cycles = 4;
 	InstrTable[0x95] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_STA";
 	instr.addr = &mos6502::Addr_ABX;
 	instr.code = &mos6502::Op_STA;
 	instr.cycles = 5;
 	InstrTable[0x9D] = instr;
+	instr.addressingModeName = "Addr_ABX";
+	instr.instructionName = "Op_STA";
 	instr.addr = &mos6502::Addr_ABY;
 	instr.code = &mos6502::Op_STA;
 	instr.cycles = 5;
 	InstrTable[0x99] = instr;
+	instr.addressingModeName = "Addr_ABY";
+	instr.instructionName = "Op_STA";
 
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_STX;
 	instr.cycles = 4;
 	InstrTable[0x8E] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_STX";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_STX;
 	instr.cycles = 3;
 	InstrTable[0x86] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_STX";
 	instr.addr = &mos6502::Addr_ZEY;
 	instr.code = &mos6502::Op_STX;
 	instr.cycles = 4;
 	InstrTable[0x96] = instr;
+	instr.addressingModeName = "Addr_ZEY";
+	instr.instructionName = "Op_STX";
 
 	instr.addr = &mos6502::Addr_ABS;
 	instr.code = &mos6502::Op_STY;
 	instr.cycles = 4;
 	InstrTable[0x8C] = instr;
+	instr.addressingModeName = "Addr_ABS";
+	instr.instructionName = "Op_STY";
 	instr.addr = &mos6502::Addr_ZER;
 	instr.code = &mos6502::Op_STY;
 	instr.cycles = 3;
 	InstrTable[0x84] = instr;
+	instr.addressingModeName = "Addr_ZER";
+	instr.instructionName = "Op_STY";
 	instr.addr = &mos6502::Addr_ZEX;
 	instr.code = &mos6502::Op_STY;
 	instr.cycles = 4;
 	InstrTable[0x94] = instr;
+	instr.addressingModeName = "Addr_ZEX";
+	instr.instructionName = "Op_STY";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_TAX;
 	instr.cycles = 2;
 	InstrTable[0xAA] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_TAX";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_TAY;
 	instr.cycles = 2;
 	InstrTable[0xA8] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_TAY";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_TSX;
 	instr.cycles = 2;
 	InstrTable[0xBA] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_TSX";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_TXA;
 	instr.cycles = 2;
 	InstrTable[0x8A] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_TXA";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_TXS;
 	instr.cycles = 2;
 	InstrTable[0x9A] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_TXS";
 
 	instr.addr = &mos6502::Addr_IMP;
 	instr.code = &mos6502::Op_TYA;
 	instr.cycles = 2;
 	InstrTable[0x98] = instr;
+	instr.addressingModeName = "Addr_IMP";
+	instr.instructionName = "Op_TYA";
 
 	return;
 }
@@ -750,6 +1036,8 @@ uint16_t mos6502::Addr_REL()
 	offset = (uint16_t)Read(pc++);
 	if (offset & 0x80) offset |= 0xFF00;
 	addr = pc + (int16_t)offset;
+	currentValue = offset;
+	currentAddress = addr;
 	return addr;
 }
 
@@ -843,6 +1131,37 @@ uint16_t mos6502::Addr_INY()
 	addr = Read(zeroL) + (Read(zeroH) << 8) + Y;
 
 	return addr;
+}
+
+std::string mos6502::registerToString()
+{
+    std::stringstream ss;
+    ss << "A: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(A) << ", "
+       << "X: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(X) << ", "
+       << "Y: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(Y) << ", "
+       << "SP: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(sp) << ", "
+       << "PC: " << std::setfill('0') << std::setw(4) << std::hex << static_cast<int>(pc) << "\n"
+       << "PC value: (" << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(Read(pc)) << ") "
+       << ", Next Instruction: " << currentInstruction.instructionName << ", Adressing Mode: " << currentInstruction.addressingModeName << "\n"
+       << "Previous operation: {address: " << std::setfill('0') << std::setw(4) << std::hex << static_cast<int>(currentAddress)
+       << ", Value: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(currentValue) << "}\n";
+      
+    return ss.str();
+}
+
+std::string mos6502::statusToString()
+{
+    std::stringstream ss;
+    ss << "C: " << IF_CARRY() << ", "
+       << "Z: " << IF_ZERO() << ", "
+       << "I: " << IF_INTERRUPT() << ", "
+       << "D: " << IF_DECIMAL() << ", "
+       << "B: " << IF_BREAK() << ", "
+       << "U: " << IF_CONSTANT() << ", "
+       << "V: " << IF_OVERFLOW() << ", "
+       << "N: " << IF_NEGATIVE();
+
+    return ss.str();
 }
 
 void mos6502::Reset()
@@ -942,10 +1261,10 @@ void mos6502::Run(
 		opcode = Read(pc++);
 
 		// decode
-		instr = InstrTable[opcode];
+		currentInstruction = InstrTable[opcode];
 
 		// execute
-		Exec(instr);
+		Exec(currentInstruction);
 		cycleCount += instr.cycles;
 		cyclesRemaining -=
 			cycleMethod == CYCLE_COUNT        ? instr.cycles

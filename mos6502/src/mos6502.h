@@ -8,6 +8,7 @@
 
 #pragma once
 #include <stdint.h>
+#include <string>
 #include <bus.h>
 
 class mos6502
@@ -30,6 +31,8 @@ private:
 
 	// program counter
 	uint16_t pc;
+	uint16_t currentAddress = 0;
+	uint8_t currentValue = 0;
 
 	// status register
 	uint8_t status;
@@ -42,7 +45,11 @@ private:
 		AddrExec addr;
 		CodeExec code;
 		uint8_t cycles;
+		std::string instructionName;
+		std::string addressingModeName;
 	};
+
+	Instr currentInstruction = {};
 
 	static Instr InstrTable[256];
 
