@@ -388,11 +388,8 @@ void CPU6502::reset()
 
 void CPU6502::execute()
 {
-    currentInstruction = instructions[read(pc)];
-
-    ++pc;
+    currentInstruction = instructions[read(pc++)];
     
-
     (this->*currentInstruction.addressingMode)();
     (this->*currentInstruction.operation)();
     
@@ -419,7 +416,8 @@ void CPU6502::accumulator()
 
 void CPU6502::relative()
 {
-    uint8_t offset = read(pc);
+    uint16_t offset = read(pc);
+
     ++pc;
 
     if (offset & 0x80)
@@ -428,6 +426,7 @@ void CPU6502::relative()
     }
 
     currentValue = offset;
+    currentAddress = pc + offset;
 }
 
 //look up the page boundary bug for JMP opcode
@@ -603,14 +602,13 @@ void CPU6502::BCC()
     if (!getFlag(CPUFLAGS::C))
     {
         cycles++;
-        uint16_t rel = pc + currentValue;
 
-        if (rel & 0xFF00 != pc & 0xFF00)
+        if (currentAddress & 0xFF00 != pc & 0xFF00)
         {
             cycles++;
         }
 
-        pc = rel;
+        pc = currentAddress;
     }
 }
 
@@ -621,12 +619,12 @@ void CPU6502::BCS()
         cycles++;
         uint16_t rel = pc + currentValue;
 
-        if (rel & 0xFF00 != pc & 0xFF00)
+        if (currentAddress & 0xFF00 != pc & 0xFF00)
         {
             cycles++;
         }
 
-        pc = rel;
+        pc = currentAddress;
     }
 }
 
@@ -637,12 +635,12 @@ void CPU6502::BEQ()
         cycles++;
         uint16_t rel = pc + currentValue;
 
-        if (rel & 0xFF00 != pc & 0xFF00)
+        if (currentAddress & 0xFF00 != pc & 0xFF00)
         {
             cycles++;
         }
 
-        pc = rel;
+        pc = currentAddress;
     }
 }
 
@@ -662,12 +660,12 @@ void CPU6502::BMI()
         cycles++;
         uint16_t rel = pc + currentValue;
 
-        if (rel & 0xFF00 != pc & 0xFF00)
+        if (currentAddress & 0xFF00 != pc & 0xFF00)
         {
             cycles++;
         }
 
-        pc = rel;
+        pc = currentAddress;
     }
 }
 
@@ -676,14 +674,13 @@ void CPU6502::BNE()
     if (!getFlag(CPUFLAGS::Z))
     {
         cycles++;
-        uint16_t rel = pc + currentValue;
 
-        if (rel & 0xFF00 != pc & 0xFF00)
+        if (currentAddress & 0xFF00 != pc & 0xFF00)
         {
             cycles++;
         }
 
-        pc = rel;
+        pc = currentAddress;
     }
 }
 
@@ -694,12 +691,12 @@ void CPU6502::BPL()
         cycles++;
         uint16_t rel = pc + currentValue;
 
-        if (rel & 0xFF00 != pc & 0xFF00)
+        if (currentAddress & 0xFF00 != pc & 0xFF00)
         {
             cycles++;
         }
 
-        pc = rel;
+        pc = currentAddress;
     }
 }
 
@@ -720,12 +717,12 @@ void CPU6502::BVC()
         cycles++;
         uint16_t rel = pc + currentValue;
 
-        if (rel & 0xFF00 != pc & 0xFF00)
+        if (currentAddress & 0xFF00 != pc & 0xFF00)
         {
             cycles++;
         }
 
-        pc = rel;
+        pc = currentAddress;
     }
 }
 
@@ -736,12 +733,12 @@ void CPU6502::BVS()
         cycles++;
         uint16_t rel = pc + currentValue;
 
-        if (rel & 0xFF00 != pc & 0xFF00)
+        if (currentAddress & 0xFF00 != pc & 0xFF00)
         {
             cycles++;
         }
 
-        pc = rel;
+        pc = currentAddress;
     }
 }
 

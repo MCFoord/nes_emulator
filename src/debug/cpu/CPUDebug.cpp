@@ -38,6 +38,8 @@ int main(int argc, char **argv)
     curs_set(0);
 
     bool quit = false;
+
+    int instructionCount = 0;
     while (!quit)
     {
         erase();
@@ -50,6 +52,9 @@ int main(int argc, char **argv)
         refresh();
 
         cpu->fetch();
+        addstr("instruction Count: ");
+        addstr(std::to_string(instructionCount).c_str());
+        addstr("\n");
         addstr("Registers:\n\n");
         addstr(cpu->registerToString().c_str());
         addstr("\n\n");
@@ -81,6 +86,7 @@ int main(int argc, char **argv)
         {
         case 'e':
             cpu->execute();
+            instructionCount++;
             break;
             
         case 'q':
@@ -90,6 +96,7 @@ int main(int argc, char **argv)
         case 'r':
             bus->loadProgram(argv[1]);
             cpu->reset();
+            instructionCount = 0;
             break;
         
         default:
