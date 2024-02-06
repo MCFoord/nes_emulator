@@ -396,6 +396,14 @@ void CPU6502::execute()
     return;
 }
 
+void CPU6502::run()
+{
+    while (currentInstruction.instructionName != "ILL")
+    {
+        execute();
+    }
+}
+
 
 // addressing
 void CPU6502::implicit()
