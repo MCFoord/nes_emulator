@@ -2,13 +2,15 @@
 #include <ncurses.h>
 #include <mos6502.h>
 #include <bus.h>
-// #include "interface.h"
+#include <fstream>
 
 #define WINDOW_HEIGHT 50
 #define WINDOW_WIDTH 50
 
 int main(int argc, char **argv)
 {
+    std::ofstream debugOutput;
+
     switch (argc)
     {
     case 1:
@@ -17,6 +19,15 @@ int main(int argc, char **argv)
         break;
 
     case 2:
+        break;
+
+    case 3:
+        debugOutput.open(argv[2]);
+        if (!debugOutput.is_open())
+        {
+            std::cout << "[ERROR] output file could not be opened";
+            return EXIT_FAILURE;
+        }
         break;
     
     default:
@@ -38,6 +49,7 @@ int main(int argc, char **argv)
     curs_set(0);
 
     bool quit = false;
+
     int instructionCount = 0;
     while (!quit)
     {
@@ -45,8 +57,9 @@ int main(int argc, char **argv)
         addstr("---------------------- 6502 debug ----------------------\n\n");
         addstr("   options:\n");
         addstr("       - e to execute next instruction\n");
-        addstr("       - q to quit\n");
-        addstr("       - r to reset\n\n");
+        addstr("       - a to run until illegal operation is encountered\n");
+        addstr("       - r to reset\n");
+        addstr("       - q to quit\n\n");
         addstr("--------------------------------------------------------\n\n\n");
         refresh();
 
@@ -56,6 +69,8 @@ int main(int argc, char **argv)
         addstr("\n");
         addstr("Registers:\n\n");
         addstr(cpu->registerToString().c_str());
+        // addstr("\n");
+        // addstr(cpu->instructionInfoToString().c_str());
         addstr("\n\n");
         refresh();
 
@@ -90,6 +105,18 @@ int main(int argc, char **argv)
             
         case 'q':
             quit = true;
+            break;
+
+        case 'a':
+            erase();
+            addstr("CPU is running, press ctrl + c to abort and close the program...");
+            debugOutput << "cunt" << "\n";
+            if (debugOutput.is_open())
+            {
+                debugOutput << "cuntbag" << "\n";
+                cpu->run(debugOutput, 50);
+            }
+            debugOutput << "dumb cunt" << "\n";
             break;
         
         case 'r':

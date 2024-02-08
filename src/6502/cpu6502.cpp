@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 #include "cpu6502.h"
 #include "bus.h"
 
@@ -294,12 +295,20 @@ std::string CPU6502::registerToString()
        << "X: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(x) << ", "
        << "Y: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(y) << ", "
        << "SP: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(sp) << ", "
-       << "PC: " << std::setfill('0') << std::setw(4) << std::hex << static_cast<int>(pc) << "\n"
-       << "PC value: (" << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(read(pc)) << ") "
+       << "PC: " << std::setfill('0') << std::setw(4) << std::hex << static_cast<int>(pc);
+      
+    return ss.str();
+}
+
+std::string CPU6502::instructionInfoToString()
+{
+    std::stringstream ss;
+
+    ss << "PC value: (" << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(read(pc)) << ") "
        << ", Next Instruction: " << currentInstruction.instructionName << ", Adressing Mode: " << currentInstruction.addressingModeName << "\n"
        << "Previous operation: {address: " << std::setfill('0') << std::setw(4) << std::hex << static_cast<int>(currentAddress)
        << ", Value: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(currentValue) << "}\n";
-      
+
     return ss.str();
 }
 
@@ -396,14 +405,41 @@ void CPU6502::execute()
     return;
 }
 
-void CPU6502::run()
+void CPU6502::run(int numOperations)
 {
-    while (currentInstruction.instructionName != "ILL")
+    while (currentInstruction.instructionName != "ILL" && numOperations > 0)
     {
         execute();
+        --numOperations;
     }
 }
 
+void CPU6502::run(std::ostream& output, int numOperations)
+{
+    while (currentInstruction.instructionName != "ILL" && numOperations > 0)
+    {
+        execute(output);
+        --numOperations;
+    }
+}
+
+void CPU6502::execute(std::ostream& output)
+{
+    currentInstruction = instructions[read(pc++)];
+    uint16_t instructionAddress = pc;
+    (this->*currentInstruction.addressingMode)();
+    (this->*currentInstruction.operation)();
+    
+    printOperation(instructionAddress, output);
+    return;
+}
+
+void CPU6502::printOperation(uint16_t address,  std::ostream& output)
+{
+    output << "[ " << std::setfill('0') << std::setw(4) << std::hex << static_cast<int>(address)
+           << ": " << currentInstruction.instructionName << " ] "
+           << registerToString() << " " << statusToString() << "\n";
+}
 
 // addressing
 void CPU6502::implicit()

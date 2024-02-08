@@ -175,6 +175,8 @@ public:
 		int32_t cycles,
 		uint64_t& cycleCount,
 		CycleMethod cycleMethod = CYCLE_COUNT);
+	void run(std::ostream& output, int numOperations);
+	void printOperation(uint16_t address,  std::ostream& output);
 	void RunEternally(); // until it encounters a illegal opcode
 						 // useful when running e.g. WOZ Monitor
 						 // no need to worry about cycle exhaus-

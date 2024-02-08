@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
+#include <fstream>
 
 class Bus;
 
@@ -64,10 +65,15 @@ class CPU6502
         void reset();
         void tick();
         void execute();
-        void run();
+        void run(int numOperations);
 
+        //debug methods
         std::string registerToString();
+        std::string instructionInfoToString();
         std::string statusToString();
+        void printOperation(uint16_t address, std::ostream& output);
+        void run(std::ostream& output, int numOperations);
+        void execute(std::ostream& output);
 
     private:
         Bus *bus = nullptr;
