@@ -110,6 +110,7 @@ int main(int argc, char **argv)
         case 'a':
             erase();
             addstr("CPU is running, press ctrl + c to abort and close the program...");
+            refresh();
             debugOutput << "cunt" << "\n";
             if (debugOutput.is_open())
             {

@@ -3,6 +3,7 @@
 #include <cpu6502.h>
 #include <bus.h>
 #include <fstream>
+#include "mos6502.h"
 
 #define WINDOW_HEIGHT 50
 #define WINDOW_WIDTH 50
@@ -36,12 +37,19 @@ int main(int argc, char **argv)
         break;
     }
 
-    CPU6502* cpu = new CPU6502();
-    Bus* bus = new Bus();
+    CPU6502* cpu1 = new CPU6502();
+    mos6502* cpu2 = new mos6502();
+    Bus* bus1 = new Bus();
+    Bus* bus2 = new Bus();
 
-    cpu->connectBus(bus);
-    bus->loadProgram(argv[1]);
-    cpu->reset();
+    cpu1->connectBus(bus1);
+    bus1->loadProgram(argv[1]);
+    cpu1->reset();
+
+    cpu2->connectBus(bus2);
+    bus2->loadProgram(argv[1]);
+    cpu2->Reset();
+
 
     WINDOW* win = newwin(WINDOW_HEIGHT, WINDOW_WIDTH, 0, 0);
     initscr();
@@ -63,43 +71,43 @@ int main(int argc, char **argv)
         addstr("--------------------------------------------------------\n\n\n");
         refresh();
 
-        cpu->fetch();
+        cpu1->fetch();
         addstr("instruction Count: ");
         addstr(std::to_string(instructionCount).c_str());
         addstr("\n");
         addstr("Registers:\n\n");
-        addstr(cpu->registerToString().c_str());
+        addstr(cpu1->registerToString().c_str());
         addstr("\n");
-        addstr(cpu->instructionInfoToString().c_str());
+        addstr(cpu1->instructionInfoToString().c_str());
         addstr("\n\n");
         refresh();
 
         addstr("Status:\n\n");
-        addstr(cpu->statusToString().c_str());
+        addstr(cpu1->statusToString().c_str());
         addstr("\n\n");
         refresh();
 
         addstr("Zero Page:\n\n");
-        addstr(bus->memToString(0x0000, 0x00FF).c_str());
+        addstr(bus1->memToString(0x0000, 0x00FF).c_str());
         addstr("\n\n");
         refresh();
 
         addstr("Stack:\n\n");
-        addstr(bus->memToString(0x0100, 0x01FF).c_str());
+        addstr(bus1->memToString(0x0100, 0x01FF).c_str());
         addstr("\n\n");
 
         addstr("Program Data:\n\n");
-        addstr(bus->memToString(0x0400, 0x04FF).c_str());
+        addstr(bus1->memToString(0x0400, 0x04FF).c_str());
         addstr("\n\n");
 
         refresh();
 
         int ch = getch();
-
+        int count = 0;
         switch (ch)
         {
         case 'e':
-            cpu->execute();
+            cpu1->execute();
             instructionCount++;
             break;
             
@@ -108,21 +116,30 @@ int main(int argc, char **argv)
             break;
 
         case 'a':
-            erase();
-            addstr("CPU is running, press ctrl + c to abort and close the program...");
-            if (debugOutput.is_open())
+            
+            while
+            (
+                cpu1->a == cpu2->GetA() && cpu1->x == cpu2->GetX() &&
+                cpu1->y == cpu2->GetY() && cpu1->pc == cpu2->GetPC() &&
+                cpu1->sp == cpu2->GetS() && cpu1->status == cpu2->GetP()
+            )
             {
-                cpu->run(debugOutput, 50);
+                erase();
+                addstr(std::to_string(count).c_str());
+                addstr(" instructions run successfully");
+                refresh();
+                cpu1->execute();
+                cpu2->execute();
+                ++count;
             }
-            else 
-            {
-                cpu->run(50);
-            }
+
+            cpu1->printOperation(cpu1->pc, debugOutput);
+            cpu2->printOperation(cpu2->GetPC(), debugOutput);
             break;
-        
+
         case 'r':
-            bus->loadProgram(argv[1]);
-            cpu->reset();
+            bus1->loadProgram(argv[1]);
+            cpu1->reset();
             instructionCount = 0;
             break;
         

@@ -388,7 +388,7 @@ void CPU6502::reset()
     x = 0x00;
     y = 0x00;
     sp = 0xFD;
-    status = 0x00;
+    status = 0x30;
 
     currentAddress = 0x000;
     currentValue = 0x00;
@@ -811,7 +811,7 @@ void CPU6502::CMP()
     uint8_t result = a - currentValue;
 
     setFlag(CPU6502::C, (a >= currentValue));
-    setFlag(CPU6502::Z, (a = currentValue));
+    setFlag(CPU6502::Z, (a == currentValue));
     setFlag(CPU6502::N, (result & 0x80));
 }
 
@@ -820,7 +820,7 @@ void CPU6502::CPX()
     uint8_t result = x - currentValue;
 
     setFlag(CPU6502::C, (x >= currentValue));
-    setFlag(CPU6502::Z, (x = currentValue));
+    setFlag(CPU6502::Z, (x == currentValue));
     setFlag(CPU6502::N, (result & 0x80));
 }
 
@@ -829,7 +829,7 @@ void CPU6502::CPY()
     uint8_t result = y - currentValue;
 
     setFlag(CPU6502::C, (y >= currentValue));
-    setFlag(CPU6502::Z, (y = currentValue));
+    setFlag(CPU6502::Z, (y == currentValue));
     setFlag(CPU6502::N, (result & 0x80));
 }
 

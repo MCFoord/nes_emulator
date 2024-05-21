@@ -1332,7 +1332,7 @@ void mos6502::run(std::ostream& output, int numOperations)
 void mos6502::printOperation(uint16_t address,  std::ostream& output)
 {
     output << "[ " << std::setfill('0') << std::setw(4) << std::hex << static_cast<int>(address)
-           << ": " << currentInstruction.instructionName << " ] "
+           << ": " << currentInstruction.instructionName << "    ] "
            << registerToString() << " " << statusToString() << "\n";
 }
 
