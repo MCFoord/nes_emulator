@@ -36,7 +36,7 @@ mos6502::mos6502()
     , reset_X(0x00)
     , reset_Y(0x00)
     , reset_sp(0xFD)
-    , reset_status(CONSTANT)
+    , reset_status(0x00)
 {
 
 	static bool initialized = false;
@@ -1199,7 +1199,7 @@ void mos6502::Reset()
 
 	sp = reset_sp;
 
-	status = reset_status | CONSTANT | BREAK;
+	status = reset_status;
 
 	illegalOpcode = false;
 
@@ -1242,7 +1242,7 @@ void mos6502::IRQ()
 		//SET_BREAK(0);
 		StackPush((pc >> 8) & 0xFF);
 		StackPush(pc & 0xFF);
-		StackPush((status & ~BREAK) | CONSTANT);
+		StackPush(status);
 		SET_INTERRUPT(1);
 
 		// load PC from reset vector
@@ -1258,7 +1258,7 @@ void mos6502::NMI()
 	//SET_BREAK(0);
 	StackPush((pc >> 8) & 0xFF);
 	StackPush(pc & 0xFF);
-	StackPush((status & ~BREAK) | CONSTANT);
+	StackPush(status);
 	SET_INTERRUPT(1);
 
 	// load PC from reset vector
@@ -1536,7 +1536,7 @@ void mos6502::Op_BIT(uint16_t src)
 	uint8_t m = Read(src);
 	uint8_t res = m & A;
 	SET_NEGATIVE(res & 0x80);
-	status = (status & 0x3F) | (uint8_t)(m & 0xC0) | CONSTANT | BREAK;
+	status = (status & 0x3F) | (uint8_t)(m & 0xC0);
 	SET_ZERO(!res);
 	return;
 }
@@ -1573,7 +1573,7 @@ void mos6502::Op_BRK(uint16_t src)
 	pc++;
 	StackPush((pc >> 8) & 0xFF);
 	StackPush(pc & 0xFF);
-	StackPush(status | CONSTANT | BREAK);
+	StackPush(status);
 	SET_INTERRUPT(1);
 	pc = (Read(irqVectorH) << 8) + Read(irqVectorL);
 	return;
@@ -1793,7 +1793,7 @@ void mos6502::Op_PHA(uint16_t src)
 
 void mos6502::Op_PHP(uint16_t src)
 {
-	StackPush(status | CONSTANT | BREAK);
+	StackPush(status);
 	return;
 }
 
@@ -1807,7 +1807,7 @@ void mos6502::Op_PLA(uint16_t src)
 
 void mos6502::Op_PLP(uint16_t src)
 {
-	status = StackPop() | CONSTANT | BREAK;
+	status = StackPop();
 	//SET_CONSTANT(1);
 	return;
 }
@@ -1868,7 +1868,7 @@ void mos6502::Op_RTI(uint16_t src)
 {
 	uint8_t lo, hi;
 
-	status = StackPop() | CONSTANT | BREAK;
+	status = StackPop();
 
 	lo = StackPop();
 	hi = StackPop();

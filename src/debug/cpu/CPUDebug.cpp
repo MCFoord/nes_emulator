@@ -37,18 +37,13 @@ int main(int argc, char **argv)
         break;
     }
 
-    CPU6502* cpu1 = new CPU6502();
-    mos6502* cpu2 = new mos6502();
+    CPU6502* cpu = new CPU6502();
     Bus* bus1 = new Bus();
-    Bus* bus2 = new Bus();
 
-    cpu1->connectBus(bus1);
+
+    cpu->connectBus(bus1);
     bus1->loadProgram(argv[1]);
-    cpu1->reset();
-
-    cpu2->connectBus(bus2);
-    bus2->loadProgram(argv[1]);
-    cpu2->Reset();
+    cpu->reset();
 
 
     WINDOW* win = newwin(WINDOW_HEIGHT, WINDOW_WIDTH, 0, 0);
@@ -71,19 +66,19 @@ int main(int argc, char **argv)
         addstr("--------------------------------------------------------\n\n\n");
         refresh();
 
-        cpu1->fetch();
+        cpu->fetch();
         addstr("instruction Count: ");
         addstr(std::to_string(instructionCount).c_str());
         addstr("\n");
         addstr("Registers:\n\n");
-        addstr(cpu1->registerToString().c_str());
+        addstr(cpu->registerToString().c_str());
         addstr("\n");
-        addstr(cpu1->instructionInfoToString().c_str());
+        addstr(cpu->instructionInfoToString().c_str());
         addstr("\n\n");
         refresh();
 
         addstr("Status:\n\n");
-        addstr(cpu1->statusToString().c_str());
+        addstr(cpu->statusToString().c_str());
         addstr("\n\n");
         refresh();
 
@@ -104,10 +99,13 @@ int main(int argc, char **argv)
 
         int ch = getch();
         int count = 0;
+        uint16_t currentPC = 0x00;
+        int pcRepeatCount = 0;
+
         switch (ch)
         {
         case 'e':
-            cpu1->execute();
+            cpu->execute();
             instructionCount++;
             break;
             
@@ -117,29 +115,30 @@ int main(int argc, char **argv)
 
         case 'a':
             
-            while
-            (
-                cpu1->a == cpu2->GetA() && cpu1->x == cpu2->GetX() &&
-                cpu1->y == cpu2->GetY() && cpu1->pc == cpu2->GetPC() &&
-                cpu1->sp == cpu2->GetS() && cpu1->status == cpu2->GetP()
-            )
+            while (cpu->currentInstruction.instructionName != "ILL" && pcRepeatCount < 3)
             {
                 erase();
                 addstr(std::to_string(count).c_str());
                 addstr(" instructions run successfully");
                 refresh();
-                cpu1->execute();
-                cpu2->execute();
+                cpu->execute();
+                if (cpu->pc == currentPC)
+                {
+                    pcRepeatCount++;
+                }
+                else
+                {
+                    currentPC = cpu->pc;
+                }
                 ++count;
             }
 
-            cpu1->printOperation(cpu1->pc, debugOutput);
-            cpu2->printOperation(cpu2->GetPC(), debugOutput);
+            cpu->printOperation(cpu->pc, debugOutput);
             break;
 
         case 'r':
             bus1->loadProgram(argv[1]);
-            cpu1->reset();
+            cpu->reset();
             instructionCount = 0;
             break;
         

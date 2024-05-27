@@ -66,6 +66,7 @@ class CPU6502
         void tick();
         void execute();
         void run(int numOperations);
+        void run();
 
         //debug methods
         std::string registerToString();

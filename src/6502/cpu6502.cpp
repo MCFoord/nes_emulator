@@ -388,7 +388,7 @@ void CPU6502::reset()
     x = 0x00;
     y = 0x00;
     sp = 0xFD;
-    status = 0x30;
+    status = 0x00;
 
     currentAddress = 0x000;
     currentValue = 0x00;
@@ -411,6 +411,14 @@ void CPU6502::run(int numOperations)
     {
         execute();
         --numOperations;
+    }
+}
+
+void CPU6502::run()
+{
+    while (currentInstruction.instructionName != "ILL")
+    {
+        execute();
     }
 }
 
