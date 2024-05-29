@@ -15,7 +15,6 @@ include_directories(
     ${6502_DIR}
     ${SYSTEM_DIR}
     ${CURSES_INCLUDE_DIR}
-    ${ROOT_DIR}/mos6502/src
 )
 
 set(NES_SOURCES
@@ -37,13 +36,11 @@ set(CPU_DEBUG_SOURCES
     ${6502_DIR}/cpu6502.cpp
     ${SYSTEM_DIR}/bus.cpp
     ${CPU_DEBUG_DIR}/CPUDebug.cpp
-    ${ROOT_DIR}/mos6502/src/mos6502.cpp
 )
 
 set(CPU_DEBUG_INCLUDES
     ${SYSTEM_DIR}/bus.h
     ${6502_DIR}/cpu6502.h
-    ${ROOT_DIR}/mos6502/src/mos6502.h
 )
 
 add_executable(CPUDebug
