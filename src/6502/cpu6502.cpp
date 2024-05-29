@@ -1042,8 +1042,8 @@ void CPU6502::RTI()
 
 void CPU6502::RTS()
 {
+    uint16_t lowByte = pop();
     uint8_t highByte = pop();
-    uint8_t lowByte = pop();
 
     pc = (highByte << 8) | lowByte;
 }
