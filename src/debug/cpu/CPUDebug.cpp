@@ -3,7 +3,6 @@
 #include <cpu6502.h>
 #include <bus.h>
 #include <fstream>
-#include "mos6502.h"
 
 #define WINDOW_HEIGHT 50
 #define WINDOW_WIDTH 50
@@ -121,7 +120,8 @@ int main(int argc, char **argv)
                 addstr(std::to_string(count).c_str());
                 addstr(" instructions run successfully");
                 refresh();
-                cpu->execute();
+                cpu->execute(debugOutput);
+                // cpu->execute();
                 if (cpu->pc == currentPC)
                 {
                     pcRepeatCount++;

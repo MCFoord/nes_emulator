@@ -388,7 +388,7 @@ void CPU6502::reset()
     x = 0x00;
     y = 0x00;
     sp = 0xFD;
-    status = 0x00;
+    status = 0x30;
 
     currentAddress = 0x000;
     currentValue = 0x00;
@@ -885,7 +885,7 @@ void CPU6502::INC()
 
 void CPU6502::INX()
 {
-    x--;
+    x++;
 
     setFlag(CPU6502::Z, (x == 0x00));
     setFlag(CPU6502::N, (x & 0x80));
@@ -974,6 +974,8 @@ void CPU6502::PHA()
 
 void CPU6502::PHP()
 {
+    setFlag(CPU6502::B, true);
+    setFlag(CPU6502::U, true);
     push(status);
 }
 
