@@ -484,28 +484,23 @@ void CPU6502::relative()
 //look up the page boundary bug for JMP opcode
 void CPU6502::indirect()
 {
-    uint16_t lowByte = read(pc);
+    uint16_t pointerLow = read(pc);
     ++pc;
-    uint8_t highByte = read(pc);
+    uint8_t pointerHigh = read(pc);
+
+    currentAddress = (pointerHigh << 8) | pointerLow; //lowbyte pointer
+
+    uint16_t lowByte = read(currentAddress);
+    uint8_t highByte = read(currentAddress + 1);
+
+    if (pointerLow == 0xFF)
+    {
+        //unsure if this is actually correct, but i'm tired
+        highByte = read(((currentAddress & 0xFF00) << 8) | pointerLow);
+    }
 
     currentAddress = (highByte << 8) | lowByte;
-
-    if (lowByte == 0xFF)
-    {
-        read(((currentAddress & 0xFF00) << 8) | lowByte);
-    }
-    else
-    {
-        read(pc);
-    }
-
-    currentAddress = ++pc;
-    
-    currentAddress = ( highByte << 8) | lowByte;
-
-
     currentValue = read(currentAddress);
-
 }
 
 void CPU6502::indirectX()
