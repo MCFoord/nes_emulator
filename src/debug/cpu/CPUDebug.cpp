@@ -104,7 +104,7 @@ int main(int argc, char **argv)
         switch (ch)
         {
         case 'e':
-            cpu->execute();
+            cpu->execute(debugOutput);
             instructionCount++;
             break;
             

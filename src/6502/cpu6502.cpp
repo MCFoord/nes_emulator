@@ -1046,6 +1046,7 @@ void CPU6502::RTS()
     uint8_t highByte = pop();
 
     pc = (highByte << 8) | lowByte;
+    ++pc;
 }
 
 void CPU6502::SBC()
