@@ -19,7 +19,7 @@ CPU6502::CPU6502()
         ILLEGAL(0x07),
         {0x08, "PHP", "implicit", &CPU6502::implicit, &CPU6502::PHP, 3},
         {0x09, "ORA", "immediate", &CPU6502::immediate, &CPU6502::ORA, 2},
-        {0x0A, "ASL", "implicit", &CPU6502::implicit, &CPU6502::ASL, 2},
+        {0x0A, "ASL", "accumulator", &CPU6502::accumulator, &CPU6502::ASL, 2},
         ILLEGAL(0x0B),
         ILLEGAL(0x0C),
         {0x0D, "ORA", "absolute", &CPU6502::absolute, &CPU6502::ORA, 4},
@@ -53,7 +53,7 @@ CPU6502::CPU6502()
         ILLEGAL(0x27),
         {0x28, "PLP", "implicit", &CPU6502::implicit, &CPU6502::PLP, 4},
         {0x29, "AND", "immediate", &CPU6502::immediate, &CPU6502::AND, 2},
-        {0x2A, "ROL", "implicit", &CPU6502::implicit, &CPU6502::ROL, 2},
+        {0x2A, "ROL", "accumulator", &CPU6502::accumulator, &CPU6502::ROL, 2},
         ILLEGAL(0x2B),
         {0x2C, "BIT", "absolute", &CPU6502::absolute, &CPU6502::BIT, 4},
         {0x2D, "AND", "absolute", &CPU6502::absolute, &CPU6502::AND, 4},
@@ -87,7 +87,7 @@ CPU6502::CPU6502()
         ILLEGAL(0x47),
         {0x48, "PHA", "implicit", &CPU6502::implicit, &CPU6502::PHA, 3},
         {0x49, "EOR", "immediate", &CPU6502::immediate, &CPU6502::EOR, 2},
-        {0x4A, "LSR", "implicit", &CPU6502::implicit, &CPU6502::LSR, 2},
+        {0x4A, "LSR", "accumulator", &CPU6502::accumulator, &CPU6502::LSR, 2},
         ILLEGAL(0x4B),
         {0x4C, "JMP", "absolute", &CPU6502::absolute, &CPU6502::JMP, 3},
         {0x4D, "EOR", "absolute", &CPU6502::absolute, &CPU6502::EOR, 4},
@@ -121,7 +121,7 @@ CPU6502::CPU6502()
         ILLEGAL(0x67),
         {0x68, "PLA", "implicit", &CPU6502::implicit, &CPU6502::PLA, 4},
         {0x69, "ADC", "immediate", &CPU6502::immediate, &CPU6502::ADC, 4},
-        {0x6A, "ROR", "implicit", &CPU6502::implicit, &CPU6502::ROR, 2},
+        {0x6A, "ROR", "accumulator", &CPU6502::accumulator, &CPU6502::ROR, 2},
         ILLEGAL(0x6B),
         {0x6C, "JMP", "indirect", &CPU6502::indirect, &CPU6502::JMP, 5},
         {0x6D, "ADC", "absolute", &CPU6502::absolute, &CPU6502::ADC, 4},
@@ -445,7 +445,8 @@ void CPU6502::execute(std::ostream& output)
 void CPU6502::printOperation(uint16_t address,  std::ostream& output)
 {
     output << "[ " << std::setfill('0') << std::setw(4) << std::hex << static_cast<int>(address)
-           << ": " << currentInstruction.instructionName << " ] "
+           << ": " << currentInstruction.instructionName << " " << std::setfill(' ') 
+           << std::setw(11) << std::left << currentInstruction.addressingModeName << " ] "
            << registerToString() << " " << statusToString() << "\n";
 }
 
@@ -581,20 +582,23 @@ void CPU6502::absoluteY()
 */
 void CPU6502::zeroPage()
 {
-    currentValue = read(read(pc) & 0xFF);
-    currentAddress = ++pc;
+    currentAddress = read(pc) & 0xFF;
+    currentValue = read(currentAddress);
+    ++pc;
 }   
 
 void CPU6502::zeroPageX()
 {
-    currentValue = read((read(pc) + x) & 0xFF);
-    currentAddress = ++pc;
+    currentAddress = (read(pc) + x) & 0xFF;
+    currentValue = read(currentAddress);
+    ++pc;
 }
 
 void CPU6502::zeroPageY()
 {
-    currentValue = read((read(pc) + y) & 0xFF);
-    currentAddress = ++pc;
+    currentAddress = (read(pc) + y) & 0xFF;
+    currentValue = read(currentAddress);
+    ++pc;
 }
 
 
@@ -749,12 +753,14 @@ void CPU6502::BPL()
 
 void CPU6502::BRK()
 {
-    push((pc >> 8) & 0xFF);
-    push(pc & 0xFF);
-
-    pc = (read(0xFFFF) << 8) | read(0xFFFE);
     setFlag(CPU6502::B, true);
     setFlag(CPU6502::I, true);
+
+    push((pc >> 8) & 0xFF);
+    push(pc & 0xFF);
+    push(status);
+
+    pc = (read(0xFFFF) << 8) | read(0xFFFE);
 }
 
 void CPU6502::BVC()
