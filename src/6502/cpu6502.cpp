@@ -449,8 +449,8 @@ void CPU6502::printOperation(uint16_t address,  std::ostream& output)
            << ": " << currentInstruction.instructionName << " " << std::setfill(' ') 
            << std::setw(11) << std::left << currentInstruction.addressingModeName << " ] "
            << registerToString() << " " << statusToString()
-           << " ca: " << std::setfill('0') << std::setw(4) << std::hex << static_cast<int>(currentAddress)
-           << " cv: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(currentValue) << "\n";
+           << " ca: " << std::hex << static_cast<int>(currentAddress)
+           << " cv: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(read(0x01fd)) << "\n";
 }
 
 // addressing
@@ -743,11 +743,14 @@ void CPU6502::BPL()
 void CPU6502::BRK()
 {
     setFlag(CPU6502::B, true);
-    setFlag(CPU6502::I, true);
+    setFlag(CPU6502::U, true);
 
+    pc++;
     push((pc >> 8) & 0xFF);
     push(pc & 0xFF);
     push(status);
+
+    setFlag(CPU6502::I, true);
 
     pc = (read(0xFFFF) << 8) | read(0xFFFE);
 }

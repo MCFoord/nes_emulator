@@ -114,7 +114,6 @@ int main(int argc, char **argv)
             break;
 
         case 'a':
-            
             while (cpu->currentInstruction.instructionName != "ILL" && pcRepeatCount < 3 && !success)
             {
                 erase();
