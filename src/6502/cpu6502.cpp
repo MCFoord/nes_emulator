@@ -435,9 +435,10 @@ void CPU6502::execute(std::ostream& output)
 {
     currentInstruction = instructions[read(pc++)];
     uint16_t instructionAddress = pc;
+    
     (this->*currentInstruction.addressingMode)();
     (this->*currentInstruction.operation)();
-    
+
     printOperation(instructionAddress, output);
     return;
 }
@@ -447,7 +448,9 @@ void CPU6502::printOperation(uint16_t address,  std::ostream& output)
     output << "[ " << std::setfill('0') << std::setw(4) << std::hex << static_cast<int>(address)
            << ": " << currentInstruction.instructionName << " " << std::setfill(' ') 
            << std::setw(11) << std::left << currentInstruction.addressingModeName << " ] "
-           << registerToString() << " " << statusToString() << "\n";
+           << registerToString() << " " << statusToString()
+           << " ca: " << std::setfill('0') << std::setw(4) << std::hex << static_cast<int>(currentAddress)
+           << " cv: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(currentValue) << "\n";
 }
 
 // addressing
@@ -458,8 +461,8 @@ void CPU6502::implicit()
 
 void CPU6502::immediate()
 {
-    currentValue = read(pc);
-    currentAddress = ++pc;
+    currentValue = read(pc++);
+    currentAddress = pc;
 }
 
 void CPU6502::accumulator()
@@ -469,9 +472,7 @@ void CPU6502::accumulator()
 
 void CPU6502::relative()
 {
-    uint16_t offset = read(pc);
-
-    ++pc;
+    uint16_t offset = read(pc++);
 
     if (offset & 0x80)
     {
@@ -485,8 +486,7 @@ void CPU6502::relative()
 //look up the page boundary bug for JMP opcode
 void CPU6502::indirect()
 {
-    uint16_t pointerLow = read(pc);
-    ++pc;
+    uint16_t pointerLow = read(pc++);
     uint8_t pointerHigh = read(pc);
 
     currentAddress = (pointerHigh << 8) | pointerLow; //lowbyte pointer
@@ -506,7 +506,7 @@ void CPU6502::indirect()
 
 void CPU6502::indirectX()
 {
-    currentAddress = ++pc;
+    currentAddress = pc++;
     uint16_t lowByte = read((read(pc) + x) & 0x00FF);
     uint16_t highByte = read(((read(pc) + x + 1) & 0x00FF));
 
@@ -517,10 +517,8 @@ void CPU6502::indirectX()
 
 void CPU6502::indirectY()
 {
-    uint16_t lowByte = read(pc);
-    ++pc;
-    uint16_t highByte = read(pc);
-    ++pc;
+    uint16_t lowByte = read(pc++);
+    uint16_t highByte = read(pc++);
 
     currentAddress = ((highByte << 8) | lowByte) + y;
     
@@ -534,38 +532,32 @@ void CPU6502::indirectY()
 
 void CPU6502::absolute()
 {
-    uint16_t lowByte = read(pc);
-    currentAddress = ++pc;
-    currentAddress = (read(pc) << 8) | lowByte;
-
-    ++pc;
+    uint16_t lowByte = read(pc++);
+    currentAddress = (read(pc++) << 8) | lowByte;
 
     currentValue = read(currentAddress);
 } 
 
 void CPU6502::absoluteX()
 {
-    uint16_t lowByte = read(pc);
-    currentAddress = ++pc;
-    uint16_t highByte = read(pc);
-    ++pc;
+	uint16_t addr;
+	uint16_t addrL;
+	uint16_t addrH;
 
-    currentAddress = ((highByte << 8) | lowByte) + x;
+	addrL = read(pc++);
+	addrH = read(pc++);
 
-    if (currentAddress & 0xFF00 != highByte)
-    {
-        cycles++;
-    }
+	addr = addrL + (addrH << 8) + x;
 
+    currentAddress = addr;
+	
     currentValue = read(currentAddress);
 }
 
 void CPU6502::absoluteY()
 {
     uint16_t lowByte = read(pc);
-    currentAddress = ++pc;
-    uint16_t highByte = read(pc);
-    ++pc;
+    uint16_t highByte = read(pc++);
 
     currentAddress = ((highByte << 8) | lowByte) + y;
 
@@ -582,23 +574,20 @@ void CPU6502::absoluteY()
 */
 void CPU6502::zeroPage()
 {
-    currentAddress = read(pc) & 0xFF;
+    currentAddress = read(pc++) & 0xFF;
     currentValue = read(currentAddress);
-    ++pc;
 }   
 
 void CPU6502::zeroPageX()
 {
-    currentAddress = (read(pc) + x) & 0xFF;
+    currentAddress = (read(pc++) + x) & 0xFF;
     currentValue = read(currentAddress);
-    ++pc;
 }
 
 void CPU6502::zeroPageY()
 {
-    currentAddress = (read(pc) + y) & 0xFF;
+    currentAddress = (read(pc++) + y) & 0xFF;
     currentValue = read(currentAddress);
-    ++pc;
 }
 
 
@@ -1052,7 +1041,7 @@ void CPU6502::RTS()
     uint8_t highByte = pop();
 
     pc = (highByte << 8) | lowByte;
-    ++pc;
+    pc++;
 }
 
 void CPU6502::SBC()

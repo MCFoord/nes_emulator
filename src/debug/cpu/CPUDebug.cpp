@@ -100,6 +100,7 @@ int main(int argc, char **argv)
         int count = 0;
         uint16_t currentPC = 0x00;
         int pcRepeatCount = 0;
+        bool success = false;
 
         switch (ch)
         {
@@ -114,7 +115,35 @@ int main(int argc, char **argv)
 
         case 'a':
             
-            while (cpu->currentInstruction.instructionName != "ILL" && pcRepeatCount < 3)
+            while (cpu->currentInstruction.instructionName != "ILL" && pcRepeatCount < 3 && !success)
+            {
+                erase();
+                addstr(std::to_string(count).c_str());
+                addstr(" instructions run successfully");
+                refresh();
+                cpu->execute(debugOutput);
+                // cpu->execute();
+                if (cpu->pc == currentPC)
+                {
+                    pcRepeatCount++;
+                }
+                else if (cpu->pc == 0x3469 || cpu->pc == 0x346c)
+                {
+                    success = true;
+                }
+                else
+                {
+                    currentPC = cpu->pc;
+                }
+                ++count;
+            }
+
+            cpu->printOperation(cpu->pc, debugOutput);
+            break;
+
+        case 'b':
+            
+            while (count < 40880)
             {
                 erase();
                 addstr(std::to_string(count).c_str());
