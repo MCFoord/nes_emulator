@@ -183,7 +183,7 @@ CPU6502::CPU6502()
         {0xA1, "LDA", "indirectX", &CPU6502::indirectX, &CPU6502::LDA, 6},
         {0xA2, "LDX", "immediate", &CPU6502::immediate, &CPU6502::LDX, 2},
         ILLEGAL(0xA3),
-        {0xA4, "LDA", "zeroPage", &CPU6502::zeroPage, &CPU6502::LDA, 4},
+        {0xA4, "LDY", "zeroPage", &CPU6502::zeroPage, &CPU6502::LDY, 4},
         {0xA5, "LDA", "zeroPage", &CPU6502::zeroPage, &CPU6502::LDA, 4},
         {0xA6, "LDX", "zeroPage", &CPU6502::zeroPage, &CPU6502::LDX, 4},
         ILLEGAL(0xA7),
@@ -191,7 +191,7 @@ CPU6502::CPU6502()
         {0xA9, "LDA", "immediate", &CPU6502::immediate, &CPU6502::LDA, 2},
         {0xAA, "TAX", "implicit", &CPU6502::implicit, &CPU6502::TAX, 2},
         ILLEGAL(0xAB),
-        {0xAC, "LDA", "absolute", &CPU6502::absolute, &CPU6502::LDA, 4},
+        {0xAC, "LDY", "absolute", &CPU6502::absolute, &CPU6502::LDY, 4},
         {0xAD, "LDA", "absolute", &CPU6502::absolute, &CPU6502::LDA, 4},
         {0xAE, "LDX", "absolute", &CPU6502::absolute, &CPU6502::LDX, 4},
         ILLEGAL(0xAF),
@@ -508,7 +508,7 @@ void CPU6502::indirectX()
 {
     currentAddress = pc++;
     uint16_t lowByte = read((read(pc) + x) & 0x00FF);
-    uint16_t highByte = read(((read(pc) + x + 1) & 0x00FF));
+    uint8_t highByte = read(((read(pc) + x + 1) & 0xFF));
 
     currentAddress = (highByte << 8) | lowByte;
 
@@ -518,10 +518,11 @@ void CPU6502::indirectX()
 void CPU6502::indirectY()
 {
     uint16_t lowByte = read(pc++);
-    uint16_t highByte = read(pc++);
+    uint8_t highByte = (lowByte + 1) & 0xFF;
 
-    currentAddress = ((highByte << 8) | lowByte) + y;
+    currentAddress = ((read(highByte) << 8) | read(lowByte)) + y;
     
+    //FIX THIS to match the change above
     if (currentAddress & 0xFF00 != highByte)
     {
         cycles++;
