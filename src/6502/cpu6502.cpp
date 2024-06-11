@@ -506,12 +506,10 @@ void CPU6502::indirect()
 
 void CPU6502::indirectX()
 {
-    currentAddress = pc++;
-    uint16_t lowByte = read((read(pc) + x) & 0x00FF);
-    uint8_t highByte = read(((read(pc) + x + 1) & 0xFF));
+    uint16_t lowByte = (read(pc++) + x) & 0x00FF;
+    uint8_t highByte = (lowByte + 1) & 0xFF;
 
-    currentAddress = (highByte << 8) | lowByte;
-
+    currentAddress = (read(highByte) << 8) | read(lowByte);
     currentValue = read(currentAddress);
 }
 
@@ -541,16 +539,10 @@ void CPU6502::absolute()
 
 void CPU6502::absoluteX()
 {
-	uint16_t addr;
-	uint16_t addrL;
-	uint16_t addrH;
+    uint16_t lowByte = read(pc++);
+    uint8_t highByte = read(pc++);
 
-	addrL = read(pc++);
-	addrH = read(pc++);
-
-	addr = addrL + (addrH << 8) + x;
-
-    currentAddress = addr;
+	currentAddress = ((highByte << 8) | lowByte) + x;
 	
     currentValue = read(currentAddress);
 }
@@ -558,7 +550,7 @@ void CPU6502::absoluteX()
 void CPU6502::absoluteY()
 {
     uint16_t lowByte = read(pc++);
-    uint16_t highByte = read(pc++);
+    uint8_t highByte = read(pc++);
 
     currentAddress = ((highByte << 8) | lowByte) + y;
 
