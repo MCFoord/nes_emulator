@@ -556,7 +556,7 @@ void CPU6502::absoluteX()
 
 void CPU6502::absoluteY()
 {
-    uint16_t lowByte = read(pc);
+    uint16_t lowByte = read(pc++);
     uint16_t highByte = read(pc++);
 
     currentAddress = ((highByte << 8) | lowByte) + y;
@@ -1032,8 +1032,9 @@ void CPU6502::ROR()
 void CPU6502::RTI()
 {
     status = pop();
-    uint8_t highByte = pop();
     uint8_t lowByte = pop();
+    uint8_t highByte = pop();
+    
 
     pc = (highByte << 8) | lowByte;
 }
