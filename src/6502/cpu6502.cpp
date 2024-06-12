@@ -31,8 +31,8 @@ CPU6502::CPU6502()
         ILLEGAL(0x12),
         ILLEGAL(0x13),
         ILLEGAL(0x14),
-        {0x15, "ORA", "zeroPage", &CPU6502::zeroPage, &CPU6502::ORA, 4},
-        {0x16, "ASL", "zeroPage", &CPU6502::zeroPage, &CPU6502::ASL, 6},
+        {0x15, "ORA", "zeroPageX", &CPU6502::zeroPageX, &CPU6502::ORA, 4},
+        {0x16, "ASL", "zeroPageX", &CPU6502::zeroPageX, &CPU6502::ASL, 6},
         ILLEGAL(0x17),
         {0x18, "CLC", "implicit", &CPU6502::implicit, &CPU6502::CLC, 2},
         {0x19, "ORA", "absoluteY", &CPU6502::absoluteY, &CPU6502::ORA, 4},
@@ -91,7 +91,7 @@ CPU6502::CPU6502()
         ILLEGAL(0x4B),
         {0x4C, "JMP", "absolute", &CPU6502::absolute, &CPU6502::JMP, 3},
         {0x4D, "EOR", "absolute", &CPU6502::absolute, &CPU6502::EOR, 4},
-        {0x4E, "LSR", "absoluteX", &CPU6502::absoluteX, &CPU6502::LSR, 6},
+        {0x4E, "LSR", "absolute", &CPU6502::absolute, &CPU6502::LSR, 6},
         ILLEGAL(0x4F),
 
         {0x50, "BVC", "relative", &CPU6502::relative, &CPU6502::BVC, 2},
@@ -450,7 +450,7 @@ void CPU6502::printOperation(uint16_t address,  std::ostream& output)
            << std::setw(11) << std::left << currentInstruction.addressingModeName << " ] "
            << registerToString() << " " << statusToString()
            << " ca: " << std::hex << static_cast<int>(currentAddress)
-           << " cv: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(read(0x01fd)) << "\n";
+           << " cv: " << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(read(currentAddress)) << "\n";
 }
 
 // addressing
@@ -1045,8 +1045,8 @@ void CPU6502::SBC()
 {
     uint16_t result = a + ~currentValue + getFlag(CPUFLAGS::C);
 
-    setFlag(CPUFLAGS::Z, result == 0x00);
-    setFlag(CPUFLAGS::C, result > 0xFF);
+    setFlag(CPUFLAGS::Z, (result & 0xFF) == 0x00);
+    setFlag(CPUFLAGS::C, result & 0xFF00);
     setFlag(CPUFLAGS::V, (a ^ result) & (currentValue ^ result) & 0x80);
     setFlag(CPUFLAGS::N, result & 0x80);
 
