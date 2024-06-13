@@ -584,13 +584,22 @@ void CPU6502::zeroPageY()
 }
 
 
-//inctructions
+// inctructions
 void CPU6502::ADC()
 {
     uint16_t result = a + currentValue + getFlag(CPUFLAGS::C);
 
-    setFlag(CPUFLAGS::Z, result == 0x00);
-    setFlag(CPUFLAGS::C, result > 0xFF);
+    if (getFlag(CPUFLAGS::D))
+    {
+        result = (a & 0x0F) + (currentValue & 0x0F) + getFlag(CPUFLAGS::C);
+        if (result > 9) result += 0x06;
+
+        result = (a & 0xF0) + (currentValue & 0xF0) + (result > 0x0F ? 0x10 : 0) + (result & 0x0F);
+        if (result > 0x9F) result += 0x60;
+    }
+
+    setFlag(CPUFLAGS::Z, (result & 0xFF) == 0x00);
+    setFlag(CPUFLAGS::C, (result > 0xFF));
     setFlag(CPUFLAGS::V, (a ^ result) & (currentValue ^ result) & 0x80);
     setFlag(CPUFLAGS::N, result & 0x80);
 
@@ -1043,11 +1052,21 @@ void CPU6502::RTS()
 
 void CPU6502::SBC()
 {
-    uint16_t result = a + ~currentValue + getFlag(CPUFLAGS::C);
+    uint16_t flipped = currentValue ^ 0xFF;
+    uint16_t result = a + flipped + getFlag(CPUFLAGS::C);
+
+    if (getFlag(CPUFLAGS::D))
+    {
+        result = (a & 0x0F) + (flipped & 0x0F) + getFlag(CPUFLAGS::C);
+        if (result <= 0xF) result -= 0x06;
+
+        result = (a & 0xF0) + (flipped & 0xF0) + (result > 0x0F ? 0x10 : 0) + (result & 0x0F);
+        if (result <= 0xFF) result -= 0x60;
+    }
 
     setFlag(CPUFLAGS::Z, (result & 0xFF) == 0x00);
     setFlag(CPUFLAGS::C, result & 0xFF00);
-    setFlag(CPUFLAGS::V, (a ^ result) & (currentValue ^ result) & 0x80);
+    setFlag(CPUFLAGS::V, ((a ^ result) & (flipped ^ result)) & 0x80);
     setFlag(CPUFLAGS::N, result & 0x80);
 
     a = result & 0xFF;
