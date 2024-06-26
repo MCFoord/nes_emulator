@@ -114,14 +114,12 @@ int main(int argc, char **argv)
             break;
 
         case 'a':
+
             while (cpu->currentInstruction.instructionName != "ILL" && pcRepeatCount < 3 && !success)
             {
-                erase();
-                addstr(std::to_string(count).c_str());
-                addstr(" instructions run successfully");
-                refresh();
-                cpu->execute(debugOutput);
-                // cpu->execute();
+
+                // cpu->execute(debugOutput);
+                cpu->execute();
                 if (cpu->pc == currentPC)
                 {
                     pcRepeatCount++;
@@ -134,7 +132,7 @@ int main(int argc, char **argv)
                 {
                     currentPC = cpu->pc;
                 }
-                ++count;
+                instructionCount++;
             }
 
             cpu->printOperation(cpu->pc, debugOutput);
